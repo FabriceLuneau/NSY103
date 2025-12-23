@@ -1,0 +1,4 @@
+Question 4
+A présent, le processus serveur créé un thread pour chaque requête prélevée dans la file de message. Soit k requêtes reçues, vous aurez donc k threads qui s’exécutent en parallèle. Chaque thread traite la requête et renvoie la réponse.
+1. Mettez en place la structure de votre application en considérant que serveur et client sont sur une même machine.
+2. Codez votre solution en prenant soin de documenter votre code.
