@@ -40,6 +40,29 @@ void afficher() {
     }
 }
 
+// Test si la quantité de places est disponible pour l'id du spectacle spécifié, retourne un booléen
+bool quantiteEstDisponible(int idSpectacle, int quantiteDemandee) {
+    if (idSpectacle < 0 || idSpectacle >= nbSpec) {
+        return false;
+    }
+    return quantiteDemandee <= tabSpectacles[idSpectacle].nbPlaces;
+}
+
+// Décrémente le nombre de places demandées pour l'id spectacle si disponible, retourne un booléen
+bool retirerPlaces(int idSpectacle, int quantiteDemandee) {
+    if (quantiteEstDisponible(idSpectacle, quantiteDemandee)) {
+        tabSpectacles[idSpectacle].nbPlaces -= quantiteDemandee;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Ajoute des places pour le spectacle pour l'id en argument
+void ajouterPlaces(int idSpectacle, int quantiteDemandee) {
+    tabSpectacles[idSpectacle].nbPlaces += quantiteDemandee;
+}
+
 struct spectacle creerSpectacle(int id, const char *intitule, int nbPlaces) {
     struct spectacle s;
     strncpy(s.intitule, intitule, sizeof(s.intitule) - 1);
