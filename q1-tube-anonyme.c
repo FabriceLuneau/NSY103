@@ -1,9 +1,12 @@
 #include <stdbool.h>
 #include<stdio.h>
 #include"spectacle.h"
-#include <errno.h> 
-#include <string.h> 
-#include <unistd.h> 
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include"request.h";
+#include"response";
 
 
 /*
@@ -12,29 +15,57 @@ Version question 1 avec tubes anonymes
 int main(int argc, char** argv) 
 {
 	//initialisation des données, le tableau est dans le header spectacle
+	//les, deux processus auront leur copie et se synchroniseront ensuite
 	init();
+
+	//déclaration des tubes on se place du cote serveur pourles noms
+int outcoming[2];
+pipe(outcoming);
+
+	   if(outcoming == -1)
+   {
+         perror("pipe creation failled");
+         return errno;
+   } 
 	
-	//déclaration des tubes
-int serverTo client[2];
-	int  client to server[2];
-	
+	int incoming[2];
+	pipe(incoming);
+
+	if(incoming == -1)
+   {
+         perror("pipe creation failled");
+         return errno;
+   }
+		
 	//creation du processus enfant
-	   pid_t pid_client = fork(); 
+	pid_t res = fork();
+
+	   if(res == -1)
+   {
+         perror("fork failled");
+         return errno;
+   }
 	
 	//division en processus clieent et enfan 
-	if(pid_client = 0) 
+	if(res == 0) 
 	{
 		printf("Lancement du processusc client %i \n", getpid());
-		//partie client
-	//valeur impossible pour le démarage
+
+		//fermeture des descripteurs inutiles
+		        close(incoming[0]);
+        close(outcoming[1]);
+
+		
+	//valeur impossible de choix  pour le démarage
 	int specSelect = 9999;
 	
-    	
 	//Valeur d'action 99 impossible pour rester dans la boucle while
 			int choix = 99;
 			
 				//Tant que l'utilisateur ne choisit pas 0 on reste dans la boucle
 				while(choix != 0) {
+        struct request req; 
+					
 			printf("Menu \n\n");
 			
 						//Il faut choisir un spectacle pour avoir accès aux opérations, il est affiché en rappel, 9999 correspond à l'absence de choix
@@ -66,7 +97,7 @@ int serverTo client[2];
 				
 				//traitments des choix
 				switch(choix) 
-				{
+					{
 					case 1:
 					int idSpectacle;
 					
@@ -86,44 +117,59 @@ int serverTo client[2];
 						 
 						 printf("Entrez le nombbre de places \n");
 				scanf("%d", &nbPlaces);
-				
-						 retirerPlaces(specSelect, nbPlaces);
+
+						 req.idSpectacle) = specSelect; 
+req.nbPlaces = nbPlaces;
+
+        bool resultat; 
+
+        write(incoming[1], &req, sizeof(req));
+        read(outcoming[0], &resultat, sizeof(resultat)); 
+						 
+        if (resultat) {  
+						 {
+	printf("places retirees \n");
 					 }
 					 else 
 					 {
 						 printf("Places insufisantepour la demande s\n");
 					 }
-					 
-					 break;
-					 case 4:
-					 	 if(specSelect != 9999) 
-						 {
-						 int nbPlaces;
-						 
-						 printf("Entrez le nombbre de places \n");
-				scanf("%d", &nbPlaces);
-				
-						 ajouterPlaces(specSelect, nbPlaces);
-					 } 
-					 else
-					 {
-				 printf("Operation non supportee\n");
-				}
+					 }
 					 break;
 					 case 0:
+close(incoming[0]);
+	close(outcoming[1])
+	
 					 return 0;
 					 break;
 					 default:
 					 printf("Operation non supportee\n");
 					 break;
 				}
+
 	}
 	}
 	else
 	{
-		printf("Lancement du processusc serveur %i \n", getpid());
+		//partie serveur
 		
-		
+//fermeture des descripteurs intutiles
+		close(incoming[1]);
+        close(outcoming[0]);
+
+		while(1) 
+		{
+			        struct request req;
+			
+        read(incoming[0], &req, sizeof(req));
+
+			        bool ok = retirerPlaces(req.idSpectacle, req.nbPlaces);
+
+			        write(outcoming[1], &ok, sizeof(ok)); 
+		}
+
+//section inataignable le client quite dans sa partie 
+		//et le serveurdoit être coupe avec ctrl + c, les ressources seront libéré par le system  
 	}
 			
 	return 0;
