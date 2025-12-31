@@ -16,10 +16,12 @@ Version question 1 avec tubes anonymes
 int main(int argc, char** argv)
 {
     // initialisation des données
+	//le tableau des spectacles sera dupliquéd dans chaque processus 
     init();
 
     // déclaration des tubes
-    int outcoming[2];
+	//on se place cote serveur pour les noms
+	int outcoming[2];
     if (pipe(outcoming) == -1) {
         perror("pipe outcoming failed");
         return errno;
@@ -39,23 +41,26 @@ int main(int argc, char** argv)
     }
 
     /* ===================== CLIENT ===================== */
-    if (res == 0) {
-
+    if (res == 0) 
+	{
         printf("Lancement du processus client PID=%d\n", getpid());
 
         // fermeture des descripteurs inutiles
         close(incoming[0]);   // lecture serveur
         close(outcoming[1]);  // écriture serveur
 
-        int specSelect = 9999;
-        int choix = 99;
+//valeur impossible
+		int specSelect = -1;
+		//valeur de choix impossible pour lancer la boucle
+        int choix = -1;
 
         while (choix != 0) {
 
             struct request req;
 
             printf("\nMenu\n");
-            if (specSelect != 9999) {
+            if (specSelect != -1) 
+			{
                 printf("Spectacle selectionne: %d %s (%d places)\n",
                        specSelect,
                        tabSpectacles[specSelect].intitule,
@@ -66,16 +71,18 @@ int main(int argc, char** argv)
 
             printf("1 Selectionner un spectacle\n");
             printf("2 Afficher les spectacles\n");
-            if (specSelect != 9999) {
+            if (specSelect != 9999) 
+			{
                 printf("3 Retirer des places\n");
             }
+			
             printf("0 Quitter\n");
 
             printf("Entrez votre choix: ");
             scanf("%d", &choix);
 
-            switch (choix) {
-
+            switch (choix) 
+			{
                 case 1: {
                     int id;
                     printf("Entrez l'id du spectacle: ");
@@ -89,7 +96,7 @@ int main(int argc, char** argv)
                     break;
 
                 case 3:
-                    if (specSelect != 9999) {
+                    if (specSelect != -1) {
                         int nbPlaces;
                         printf("Entrez le nombre de places: ");
                         scanf("%d", &nbPlaces);
@@ -102,16 +109,20 @@ int main(int argc, char** argv)
                         bool resultat;
                         read(outcoming[0], &resultat, sizeof(resultat));
 
-                        if (resultat) {
+                        if (resultat) 
+						{
                             printf("Reservation effectuee avec succes\n");
                             retirerPlaces(specSelect, nbPlaces); // synchro locale
-                        } else {
+                        } 
+						else 
+						{
                             printf("Echec: places insuffisantes\n");
                         }
                     }
                     break;
 
                 case 0:
+					//avant de quitter on ferme les descripteurs, cela se répercute sur le serveur qui n'a plus de lecteurs pour son tube
                     close(incoming[1]);
                     close(outcoming[0]);
                     return 0;
@@ -123,7 +134,8 @@ int main(int argc, char** argv)
     }
 
     /* ===================== SERVEUR ===================== */
-    else {
+    else 
+	{
 
         // redirection sortie serveur vers server.log
         int logfd = open("server.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
@@ -141,12 +153,13 @@ int main(int argc, char** argv)
         close(incoming[1]);   // écriture client
         close(outcoming[0]);  // lecture client
 
-        while (1) {
-
+        while (1) 
+		{
             struct request req;
             ssize_t n = read(incoming[0], &req, sizeof(req));
 
-            if (n <= 0) {
+            if (n <= 0) 
+			{
                 printf("Client deconnecte, arret du serveur\n");
                 break;
             }

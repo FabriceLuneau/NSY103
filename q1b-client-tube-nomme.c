@@ -20,41 +20,45 @@ int main(void)
     int specSelect = -1;
     int choix = -1;
 
-    while (choix != 0) {
-
+    while (choix != 0) 
+	{
         printf("\nMenu\n");
-        if (specSelect >= 0) {
+		
+        if (specSelect >= 0) 
+		{
             printf("Spectacle sélectionné : %d %s (%d places)\n",
                    specSelect,
                    tabSpectacles[specSelect].intitule,
                    tabSpectacles[specSelect].nbPlaces);
-        } else {
+        } 
+		else 
+		{
             printf("Aucun spectacle sélectionné\n");
         }
 
         printf("1 - Sélectionner un spectacle\n");
         printf("2 - Afficher les spectacles\n");
-        if (specSelect >= 0) {
+		
+        if (specSelect >= 0) 
+		{
             printf("3 - Réserver des places\n");
         }
         printf("0 - Quitter\n");
         printf("Choix : ");
         scanf("%d", &choix);
 
-        switch (choix) {
-
+        switch (choix) 
+		{
         case 1:
             printf("Id du spectacle : ");
             scanf("%d", &specSelect);
             break;
-
         case 2:
             afficher();
             break;
-
         case 3:
-            if (specSelect >= 0) {
-
+            if (specSelect >= 0) 
+			{
                 struct request req;
                 int nbPlaces;
 
@@ -66,7 +70,9 @@ int main(void)
 
                 /* Envoi requête */
                 int fd_out = open(FIFO_IN, O_WRONLY);
-                if (fd_out == -1) {
+				
+                if (fd_out == -1) 
+				{
                     perror("open FIFO_IN");
                     break;
                 }
@@ -83,21 +89,23 @@ int main(void)
                 }
 
                 read(fd_in, &resultat, sizeof(resultat));
+				
                 close(fd_in);
 
-                if (resultat) {
+                if (resultat) 
+				{
                     printf("Réservation réussie\n");
                     retirerPlaces(specSelect, nbPlaces); // synchro locale
-                } else {
+                } 
+				else 
+				{
                     printf("Échec : places insuffisantes\n");
                 }
             }
             break;
-
         case 0:
             printf("Fin du client\n");
             break;
-
         default:
             printf("Choix invalide\n");
         }
