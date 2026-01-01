@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 										if(specSelect != 9999) 
 										{
 				printf("3 Retirer des places \n");
-				printf("4 Ajouter des  places \n");
+
 				printf("\n 0 Quitter \n\n");
 				}
 				
@@ -77,21 +77,6 @@ int main(int argc, char** argv)
 						 printf("Places insufisantepour la demande \n");
 					 }
 					 
-					 break;
-					 case 4:
-					 	 if(specSelect != 9999) 
-						 {
-						 int nbPlaces;
-						 
-						 printf("Entrez le nombbre de places \n");
-				scanf("%d", &nbPlaces);
-				
-						 ajouterPlaces(specSelect, nbPlaces);
-					 } 
-					 else
-					 {
-				 printf("Operation non ssupportee\n");
-				}
 					 break;
 					 case 0:
 					 return 0;
