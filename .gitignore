@@ -56,3 +56,6 @@ dkms.conf
 
 #Vs code
 .vscode/*.*
+
+#fichiers bak
+*.c~

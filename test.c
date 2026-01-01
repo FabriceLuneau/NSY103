@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 	//valeur imposible pour le démarage
 	int specSelect = 9999;
 	
-    init();
+    initTabSpectacles();
 	
 	//Valeur d'action 99 impossible pour rester dans la boucle while
 			int choix = 99;
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 					
 					 					 break;
 					 case 2:
-					 afficher();
+					 afficherTabSpectacles();
 					 
 					 break;
 					 case 3:

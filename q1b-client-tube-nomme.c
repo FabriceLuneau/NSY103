@@ -13,7 +13,7 @@
 
 int main(void)
 {
-    init();
+    initTabSpectacles();
 
     printf("Client FIFO démarré (PID=%d)\n", getpid());
 
@@ -54,7 +54,7 @@ int main(void)
             scanf("%d", &specSelect);
             break;
         case 2:
-            afficher();
+            afficherTabSpectacles();
             break;
         case 3:
             if (specSelect >= 0) 

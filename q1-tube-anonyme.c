@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
     // initialisation des données
 	//le tableau des spectacles sera dupliquéd dans chaque processus 
-    init();
+    initTabSpectacles();
 
     // déclaration des tubes
 	//on se place cote serveur pour les noms
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
                 }
 
                 case 2:
-                    afficher();
+                    afficherTabSpectacles();
                     break;
 
                 case 3:

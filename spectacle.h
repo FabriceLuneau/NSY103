@@ -14,7 +14,7 @@ struct spectacle {
 
 struct spectacle tabSpectacles[100];
 
-void init() {
+void initTabSpectacles() {
     struct spectacle tabTemp[] = {
         {"En attendant Gotot", 10},
         {"Tant qu'il y aura des pommes", 4},
@@ -30,7 +30,7 @@ void init() {
     nbSpec = taille;
 }
 
-void afficher() {
+void afficherTabSpectacles() {
     printf("Liste des spectacles :\n");
     for (int i = 0; i < nbSpec; i++) {
         printf("%d - %s (%d places)\n",
@@ -56,11 +56,6 @@ bool retirerPlaces(int idSpectacle, int quantiteDemandee) {
     } else {
         return false;
     }
-}
-
-// Ajoute des places pour le spectacle pour l'id en argument
-void ajouterPlaces(int idSpectacle, int quantiteDemandee) {
-    tabSpectacles[idSpectacle].nbPlaces += quantiteDemandee;
 }
 
 struct spectacle creerSpectacle(int id, const char *intitule, int nbPlaces) {

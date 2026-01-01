@@ -13,7 +13,7 @@
 
 int main(void)
 {
-    init();
+    initTabSpectacles();
 
     /* Création des FIFO (si inexistantes) */
     if (mkfifo(FIFO_IN, 0666) == -1 && errno != EEXIST) 

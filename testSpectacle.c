@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	
 	//printf("Entrer le nombre de place du spectacle \n");
 	
-	init();
+	initTabSpectacles();
 	
 	//afficher();
 	
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 	
 	
 	
-	afficher();
+	afficherTabSpectacles();
 	
 
 	return 0;
