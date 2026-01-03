@@ -1,3 +1,4 @@
+fbuild
 # Prerequisites
 *.d
 
@@ -59,3 +60,6 @@ dkms.conf
 
 #fichiers bak
 *.c~
+
+#dossier de build
+build/*.*
