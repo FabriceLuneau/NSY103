@@ -23,16 +23,16 @@ int main(void)
     struct request req;
 
     printf("\nTest de creation d'une structure requete sans argument");
-    creerRequestDepuisChaine("getSpectacles",& req);
-    afficherRequest(&req);
+    request_createReDepuisChaine("getSpectacles",& req);
+    reqquest_afficher(&req);
 
         printf("\nTest de creation d'une structure requete avec un argument, id= 1\n");
-    creerRequestDepuisChaine("getSpectacle?id=1",& req);
-    afficherRequest(&req);
+    request_createDepuisChaine("getSpectacle?id=1",& req);
+    request_afficher(&req);
 
     printf("\nTest de creation d'une structure requete avec deux argument, id=1 et nbPlaces=2 \n");
-    creerRequestDepuisChaine("reserver?id=1&nbPlaces=2",& req);
-    afficherRequest(&req);
+    request_createDepuisChaine("reserver?id=1&nbPlaces=2",& req);
+    request_afficher(&req);
 
     //Test response =====
 struct response resp;
