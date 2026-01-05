@@ -10,12 +10,12 @@ int main(void)
     struct cleValeur cv;
 
     printf("Test de creation d'une structure cle valeur  avec iddeux arguments séparés  1\n");
-     cv = creerCleValeur("id", "1");
-    afficherCleValeur(&cv);
+     cv = cleValeur_create("id", "1");
+    cleValeur_afficher(&cv);
 
     printf("Test de creation d'une structure cle valeur  avec une chaine, id=1\n"); 
-    cv = creerCleValeurDepuisChaine("id=1");
-     afficherCleValeur(&cv);
+    cv = cleValeur_createDepuisChaine("id=1");
+     cleValeur_afficher(&cv);
 
     // Tests de requetes
     printf("\nTest de creation des structure requete \n");
@@ -23,8 +23,8 @@ int main(void)
     struct request req;
 
     printf("\nTest de creation d'une structure requete sans argument");
-    request_createReDepuisChaine("getSpectacles",& req);
-    reqquest_afficher(&req);
+    request_createDepuisChaine("getSpectacles",& req);
+    request_afficher(&req);
 
         printf("\nTest de creation d'une structure requete avec un argument, id= 1\n");
     request_createDepuisChaine("getSpectacle?id=1",& req);
@@ -46,9 +46,14 @@ response_afficher(&resp);
  initTabSpectacles();
 
  printf("\nTeste dune reponse avec un spectacle\n");
+
+char chaine[5];
+ snprintf(chaine, sizeof(chaine), "%d", tabSpectacles[0].nbPlaces);
+
    response_init(&resp, 200);
- response_ajouterCleValeur(&resp, creerCleValeur("id", "0"));
-        response_ajouterCleValeur(&resp, creerCleValeur("intitule", tabSpectacles[0].intitule));
+ response_ajouterCleValeur(&resp, cleValeur_create("id", "0"));
+        response_ajouterCleValeur(&resp, cleValeur_create("intitule", tabSpectacles[0].intitule));
+        response_ajouterCleValeur(&resp, cleValeur_create("nbPlaces", chaine));
         //response_ajouterCleValeur(&resp, creerCleValeur("nbPlaces", tabSpectacles[0].nbPlaces));
 
    response_afficher(&resp);
@@ -56,9 +61,8 @@ response_afficher(&resp);
 
 
 
-    //printf("\n--- Test response ---\n");
-    //afficherResponse(&resp);
-    //teste de reponse avec un spectacle
+    
+    
 
     return 0;
 }

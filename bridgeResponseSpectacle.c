@@ -6,6 +6,16 @@
 #include "response.h"
 #include "spectacle.h"
 
+//Fonction utilitaire pourconvertir un nombre en chaine
+char[] convertIntToString(int intToconvert) 
+{
+    char chaine[4];
+    
+ snprintf(chain
+
+    return chaine;
+
+ }
 /*
  * Extrait les spectacles contenus dans une response.
  *
