@@ -1,3 +1,4 @@
+
 #ifndef RESPONSE_H
 #define RESPONSE_H
 
@@ -15,12 +16,39 @@
  */
 struct response {
     int code;
-    struct cleValeur content[10];
+    struct cleValeur content[100];
     int nbContent;
 };
 
-/* Affichage */
-static inline void afficherResponse(const struct response *resp)
+/*
+ * Initialise une réponse
+ */
+static inline void response_init(struct response *resp, int code)
+{
+    if (resp == NULL) return;
+    resp->code = code;
+    resp->nbContent = 0;
+}
+
+/*
+ * Ajoute une paire clé / valeur à la réponse
+ */
+static inline int response_ajouterCleValeur(
+    struct response *resp,
+    struct cleValeur item
+) {
+    if (resp == NULL) return -1;
+    if (resp->nbContent >= 100) return -1;
+
+    resp->content[resp->nbContent] = item;
+    resp->nbContent++;
+    return 0;
+}
+
+/*
+ * Affichage (debug / test)
+ */
+static inline void response_afficher(const struct response *resp)
 {
     if (resp == NULL) return;
 
@@ -29,12 +57,22 @@ static inline void afficherResponse(const struct response *resp)
     printf("Contenu (%d) :\n", resp->nbContent);
 
     for (int i = 0; i < resp->nbContent; i++) {
-        afficherCleValeur(&resp->content[i]);
+        cleValeur_afficher(&resp->content[i]);
     }
 }
 
-#endif
+//doit retourner unenouvelle response
+struct response response_create(int code) 
+{
+    //tod implements 
+    //resp->code = code;
+    //tod initialiser le tableau pour eviter les erreurs de segmenetation
+////resp .content = 
+//resp->nbContent = 0;
 
+//return resp;
 
+}
 
+#endif /* RESPONSE_H */
 

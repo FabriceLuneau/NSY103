@@ -14,13 +14,14 @@ struct spectacle {
 
 struct spectacle tabSpectacles[100];
 
-void initTabSpectacles() {
+void spectacle_initTabGlobal() {
     struct spectacle tabTemp[] = {
         {"En attendant Gotot", 10},
         {"Tant qu'il y aura des pommes", 4},
         {"Le cercle des poètes dix par rues", 7},
         {"Notre spam de Paris", 7},
-        {"L'inspecteur a ri", 9}
+        {"Pouple fiction", 17},
+        {"Les oiseaux se crashent pour mourrir", 29}
     };
 
     int taille = sizeof(tabTemp) / sizeof(tabTemp[0]);
@@ -30,7 +31,7 @@ void initTabSpectacles() {
     nbSpec = taille;
 }
 
-void afficherTabSpectacles() {
+void spectacle_afficherTout() {
     printf("Liste des spectacles :\n");
     for (int i = 0; i < nbSpec; i++) {
         printf("%d - %s (%d places)\n",
@@ -49,7 +50,7 @@ bool quantiteEstDisponible(int idSpectacle, int quantiteDemandee) {
 }
 
 // Décrémente le nombre de places demandées pour l'id spectacle si disponible, retourne un booléen
-bool retirerPlaces(int idSpectacle, int quantiteDemandee) {
+bool spectacle_retirerPlaces(int idSpectacle, int quantiteDemandee) {
     if (quantiteEstDisponible(idSpectacle, quantiteDemandee)) {
         tabSpectacles[idSpectacle].nbPlaces -= quantiteDemandee;
         return true;
@@ -66,7 +67,7 @@ struct spectacle creerSpectacle(int id, const char *intitule, int nbPlaces) {
     return s;
 }
 
-bool ajouterSpectacle(struct spectacle s) {
+bool spectacle_ajouterToGlobalTab(struct spectacle s) {
     if (nbSpec >= maxSpectacles) {
         return false;
     }
@@ -74,7 +75,7 @@ bool ajouterSpectacle(struct spectacle s) {
     return true;
 }
 
-struct spectacle creerSpectacleDepuisChaine(char *chaine) {
+struct spectacle spectacle_createDepuisChaine(char *chaine) {
     char buffer[256];
     strncpy(buffer, chaine, sizeof(buffer) - 1);
     buffer[sizeof(buffer) - 1] = '\0';
@@ -124,7 +125,7 @@ char **splitMessage(const char *chaine, int *nbElements) {
     return resultat;
 }
 
-int creerDesSpectaclesDepuisChaine(char *chaine) {
+int spectacle_createPlusieursDepuisChaine(char *chaine) {
     int nbElements = 0;
     int nbAjoutes = 0;
 
@@ -134,8 +135,8 @@ int creerDesSpectaclesDepuisChaine(char *chaine) {
         if (nbSpec >= maxSpectacles) {
             break;
         }
-        struct spectacle s = creerSpectacleDepuisChaine(messages[i]);
-        ajouterSpectacle(s);
+        struct spectacle s = spectacle_createDepuisChaine(messages[i]);
+        spectacle_ajouterToGlobalTab(s);
         nbAjoutes++;
         free(messages[i]);
     }

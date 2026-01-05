@@ -17,11 +17,8 @@ int main(int argc, char** argv)
 	
 	//printf("Entrer le nombre de place du spectacle \n");
 	
-	initTabSpectacles();
-	
-	//afficher();
-	
-	
+	spectacle_initTabGlobal();
+
     //char chaine[] = "intitule=Hamlet;nbPlaces=50";
 	
     //struct spectacle s = creerSpectacleDepuisChaine(chaine);
@@ -32,15 +29,11 @@ int main(int argc, char** argv)
         "intitule=Macbeth;nbPlaces=30,"
         "intitule=Othello;nbPlaces=40";
 
-    	        		int nb = creerDesSpectaclesDepuisChaine(chaine);
+    	        		int nb = spectacle_createPlusieursDepuisChaine(chaine);
 		
 		printf("nb : %i \n", nb);
 		
-	
-	
-	
-	
-	afficherTabSpectacles();
+	spectacle_afficherTout();
 	
 
 	return 0;

@@ -7,68 +7,110 @@
 
 /*
  * Requête client
+ *
  * Exemple :
  *   getSpectacle?id=1&nbPlaces=2
  */
 struct request {
-    char action[50];
-    struct cleValeur arguments[10];
-    int nbArguments;
+    char action[50];                 // action (ex: getSpectacle, reserver)
+    struct cleValeur arguments[10];  // paires clé / valeur
+    int nbArguments;                 // nombre réel d'arguments
 };
 
 /*
- * Analyse une chaîne et remplit une requête
+ * Initialise une requête
  */
-static inline void createRequest(const char *chaine, struct request *req)
+static inline void request_init(struct request *req)
+{
+    if (req == NULL) return;
+
+    req->action[0] = '\0';
+    req->nbArguments = 0;
+}
+
+/*
+ * Analyse une chaîne et remplit une requête
+ *
+ * Retour :
+ *   0  -> succès
+ *  -1  -> erreur de format
+ */
+static inline int request_createDepuisChaine(
+    const char *chaine,
+    struct request *req
+)
 {
     char buffer[256];
 
     if (chaine == NULL || req == NULL)
-        return;
+        return -1;
 
+    request_init(req);
+
+    /* strtok modifie la chaîne → copie locale */
     strncpy(buffer, chaine, sizeof(buffer) - 1);
     buffer[sizeof(buffer) - 1] = '\0';
-
-    req->nbArguments = 0;
-    req->action[0] = '\0';
 
     /* Séparation action / arguments */
     char *p = strtok(buffer, "?");
     if (p == NULL)
-        return;
+        return -1;
 
-    strncpy(req->action, p, 49);
-    req->action[49] = '\0';
+    strncpy(req->action, p, sizeof(req->action) - 1);
+    req->action[sizeof(req->action) - 1] = '\0';
 
-    /* Pas d’arguments */
+    /* Aucun argument */
     p = strtok(NULL, "?");
     if (p == NULL)
-        return;
+        return 0;
 
-    /* Découpage clé=valeur */
+    /* Découpage clé=valeur séparé par '&' */
     char *arg = strtok(p, "&");
 
     while (arg != NULL && req->nbArguments < 10) {
 
-        char *egal = strchr(arg, '=');
-        if (egal != NULL) {
-            *egal = '\0';
+        struct cleValeur item;
+        cleValeur_createDepuisChaine(arg);
 
-            strncpy(req->arguments[req->nbArguments].cle, arg, 49);
-            req->arguments[req->nbArguments].cle[49] = '\0';
-
-            strncpy(req->arguments[req->nbArguments].valeur, egal + 1, 49);
-            req->arguments[req->nbArguments].valeur[49] = '\0';
-
-            req->nbArguments++;
-        }
+        //if (creerCleValeurDepuisChaine(arg) == 0) {
+            //req->arguments[req->nbArguments] = item;
+            //req->nbArguments++;
+        //}
 
         arg = strtok(NULL, "&");
     }
+
+    return 0;
 }
 
-/* Affichage */
-static inline void afficherRequest(const struct request *req)
+/*
+ * Recherche la valeur d’un argument par sa clé
+ *
+ * Retourne :
+ *   pointeur sur la valeur
+ *   NULL si absent
+ */
+static inline const char *getArgumentValue(
+    const struct request *req,
+    const char *cle
+)
+{
+    if (req == NULL || cle == NULL)
+        return NULL;
+
+    for (int i = 0; i < req->nbArguments; i++) {
+        if (strcmp(req->arguments[i].cle, cle) == 0) {
+            return req->arguments[i].valeur;
+        }
+    }
+
+    return NULL;
+}
+
+/*
+ * Affichage (debug / test)
+ */
+static inline void request_afficher(const struct request *req)
 {
     if (req == NULL) return;
 
@@ -77,10 +119,9 @@ static inline void afficherRequest(const struct request *req)
     printf("Arguments (%d) :\n", req->nbArguments);
 
     for (int i = 0; i < req->nbArguments; i++) {
-        afficherCleValeur(&req->arguments[i]);
+cleValeur_afficher(&req->arguments[i]);
     }
 }
 
-#endif
-
+#endif /* REQUEST_H */
 
