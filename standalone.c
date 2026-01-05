@@ -8,10 +8,10 @@ servira de base aux questions du sujet.
 */
 int main(int argc, char** argv) 
 {
-	//valeur imposible pour le démarage
+	//valeur impossible pour le démarage
 	int specSelect = 9999;
 	
-    initTabSpectacles();
+    spectacle_initTabGlobal();
 	
 	//Valeur d'action 99 impossible pour rester dans la boucle while
 			int choix = 99;
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 					
 					 					 break;
 					 case 2:
-					 afficherTabSpectacles();
+					 spectacle_afficherTout();
 					 
 					 break;
 					 case 3:
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 						 printf("Entrez le nombbre de places \n");
 				scanf("%d", &nbPlaces);
 				
-						 retirerPlaces(specSelect, nbPlaces);
+						 spectacle_retirerPlaces(specSelect, nbPlaces);
 					 }
 					 else 
 					 {
