@@ -43,11 +43,11 @@ response_afficher(&resp);
     
 //test d'une response avec un contenu
 
- initTabSpectacles();
+ spectacle_initTabGlobal();
 
  printf("\nTeste dune reponse avec un spectacle\n");
 
-char chaine[5];
+char chaine[4];
  snprintf(chaine, sizeof(chaine), "%d", tabSpectacles[0].nbPlaces);
 
    response_init(&resp, 200);
