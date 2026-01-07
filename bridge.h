@@ -32,7 +32,7 @@ void bridge_encodeSpectaclesResponse(
             creerCleValeur("id", tmp)
         );
 
-        responseAjouterCleValeur(
+        responseAjouterCleValeumr(
             resp,
             creerCleValeur("intitule", spectacles[0].intitule)
         );

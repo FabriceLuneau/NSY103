@@ -29,9 +29,10 @@ int main(int argc, char** argv)
         "intitule=Macbeth;nbPlaces=30,"
         "intitule=Othello;nbPlaces=40";
 
-    	        		int nb = spectacle_createPlusieursDepuisChaine(chaine);
+    	//la fonction est caduc depuis que l'on passe par le protocole        		
+		//int nb = spectacle_createPlusieursDepuisChaine(chaine);
 		
-		printf("nb : %i \n", nb);
+		//printf("nb : %i \n", nb);
 		
 	spectacle_afficherTout();
 	

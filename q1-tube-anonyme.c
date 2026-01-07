@@ -20,23 +20,26 @@ int main(int argc, char **argv)
 
     /* déclaration des tubes */
     int outcoming[2]; /* serveur -> client */
-/* client -> serveur */
-    int incoming[2]; 
+                      /* client -> serveur */
+    int incoming[2];
 
-    if (pipe(outcoming) == -1) {
+    if (pipe(outcoming) == -1)
+    {
         perror("pipe outcoming failed");
         return errno;
     }
 
-    if (pipe(incoming) == -1) {
+    if (pipe(incoming) == -1)
+    {
         perror("pipe incoming failed");
         return errno;
     }
 
     /* création du processus enfant */
-    //pid_t res = fork();
+    // pid_t res = fork();
     int res = fork();
-    if (res == -1) {
+    if (res == -1)
+    {
         perror("fork failed");
         return errno;
     }
@@ -49,17 +52,17 @@ int main(int argc, char **argv)
         printf("Lancement du processus client PID=%d\n", getpid());
 
         /* tableau local client */
-        //struct spectacle tabSpectacleClient[10];
-        //size_t capacite = 10;
+        // struct spectacle tabSpectacleClient[10];
+        // size_t capacite = 10;
 
-        //spectacle_initialiser(tabSpectacleClient, capacite);
+        // spectacle_initialiser(tabSpectacleClient, capacite);
         spectacle_initTabGlobal();
-        
+
         /* fermeture des descripteurs inutiles côté client */
         /* lecture serveur */
-close(incoming[0]);   
-/* écriture serveur */
-close(outcoming[1]);  
+        close(incoming[0]);
+        /* écriture serveur */
+        close(outcoming[1]);
 
         int specSelect = -1;
         int choix = -1;
@@ -71,13 +74,16 @@ close(outcoming[1]);
 
             printf("\nMenu\n");
 
-            if (specSelect != -1) {
+            if (specSelect != -1)
+            {
                 printf("Spectacle selectionne: %d %s (%d places)\n",
                        specSelect,
-                       
-                       tabSpectacles[specSelect].intitule,
-                       tabSpectacles[specSelect].nbPlaces);
-            } else {
+
+                       tabSpectaclesGlobal[specSelect].intitule,
+                       tabSpectaclesGlobal[specSelect].nbPlaces);
+            }
+            else
+            {
                 printf("Pas de spectacle selectionne\n");
             }
 
@@ -92,7 +98,8 @@ close(outcoming[1]);
 
             switch (choix)
             {
-            case 1: {
+            case 1:
+            {
                 printf("Entrez l'id du spectacle: ");
                 scanf("%d", &specSelect);
                 break;
@@ -100,13 +107,14 @@ close(outcoming[1]);
 
             case 2:
                 spectacle_afficher();
-                    //tabSpectacles,
-                    ////spectacle_compter(tabSpectacleClient, capacite)
+                // tabSpectacles,
+                ////spectacle_compter(tabSpectacleClient, capacite)
                 //);
                 break;
 
             case 3:
-                if (specSelect != -1) {
+                if (specSelect != -1)
+                {
                     int nbPlaces;
                     printf("Entrez le nombre de places: ");
                     scanf("%d", &nbPlaces);
@@ -116,15 +124,21 @@ close(outcoming[1]);
 
                     read(outcoming[0], &resp, sizeof(resp));
 
-                    if (resp.code == 201) 
+                    if (resp.code == 201)
                     {
                         printf("Reservation effectuee avec succes\n");
-                        spectacle_reserver(specSelect, nbPlaces);
-                    } else if (resp.code == 401) {
+                        spectacle_retirerPlaces(specSelect, nbPlaces);
+                    }
+                    else if (resp.code == 401)
+                    {
                         printf("Echec: places insuffisantes\n");
-                    } else if (resp.code == 404) {
+                    }
+                    else if (resp.code == 404)
+                    {
                         printf("Echec: spectacle non trouve\n");
-                    } else {
+                    }
+                    else
+                    {
                         printf("Erreur inconnue\n");
                     }
                 }
@@ -148,7 +162,8 @@ close(outcoming[1]);
     {
         /* redirection sortie serveur vers server.log */
         int logfd = open("server.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
-        if (logfd == -1) {
+        if (logfd == -1)
+        {
             perror("open server.log failed");
             exit(EXIT_FAILURE);
         }
@@ -159,8 +174,8 @@ close(outcoming[1]);
         printf("Serveur demarre PID=%d\n", getpid());
 
         /* tableau local serveur */
-        //struct spectacle tabSpectacleServeur[10];
-        //size_t capacite = 10;
+        // struct spectacle tabSpectacleServeur[10];
+        // size_t capacite = 10;
         spectacle_initTabGlobal();
 
         /* fermeture des descripteurs inutiles côté serveur */
@@ -174,7 +189,7 @@ close(outcoming[1]);
 
             ssize_t n = read(incoming[0], &req, sizeof(req));
 
-            if (n <= 0) 
+            if (n <= 0)
             {
                 printf("Client deconnecte, arret du serveur\n");
                 break;
@@ -182,32 +197,33 @@ close(outcoming[1]);
 
             request_afficher(&req);
 
-            if (strcmp(req.action, "getSpectacles") == 0) {
+            if (strcmp(req.action, "getSpectacles") == 0)
+            {
                 response_init(&resp, 200);
                 bridge_encodeSpectaclesResponse(
                     &resp,
-                    tabSpectacles, spectacle_getTailleTableauGlobal
+                    tabSpectaclesGlobal,
+spectacle_getTailleTableauGlobal
                 );
             }
-            else if (strcmp(req.action, "getSpectacle") == 0) {
+            else if (strcmp(req.action, "getSpectacle") == 0)
+            {
                 int id = request_getId(&req);
-                struct spectacle spec =  tabSpectacles[id];
+                struct spectacle spec = tabSpectaclesGlobal[id];
                 response_init(&resp, 200);
                 bridge_encodeUnSpectacleResponse(
                     &resp,
-                    spec
-                );
+                    spec);
             }
-            else if (strcmp(req.action, "reserver") == 0) 
+            else if (strcmp(req.action, "reserver") == 0)
             {
                 int id = request_getId(&req);
                 int nbPlaces = request_getNbPlaces(&req);
 
                 int r = spectacle_reserver(
-                    tabSpectacles,
+                    tabSpectaclesGlobal,
                     spectacle_getTailleTableauGlobal,
-                    id
-                );
+                    id);
 
                 if (r == 0)
                     response_init(&resp, 201);
@@ -216,7 +232,7 @@ close(outcoming[1]);
                 else
                     response_init(&resp, 401);
             }
-            else 
+            else
             {
                 response_init(&resp, 400);
             }
@@ -228,6 +244,3 @@ close(outcoming[1]);
 
     return 0;
 }
-
-
-

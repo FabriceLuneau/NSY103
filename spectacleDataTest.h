@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+/*
+
 #include"spectacle.h"
 
 
@@ -23,3 +22,5 @@ int spectacleinitDataTest(struct spectacle* tabSpectacle [])
 
     retturn taille;
 }
+
+*/

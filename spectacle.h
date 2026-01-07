@@ -148,17 +148,22 @@ int spectacle_createPlusieursDepuisChaine(char *chaine) {
     free(messages);
     return nbAjoutes;
 }
+    */
 
 int spectacle_getTailleTableauGlobal() 
 {
-     return sizeof(tabSpectaclesGlobal) / sizeof(tabSpectaclesGlobal[0]);
+     //return sizeof(tabSpectaclesGlobal) / sizeof(tabSpectaclesGlobal[0]);
+     //todo trouver une solution dynamique
+     return 100;
 }
 /*
+
 struct spectacle spectacle_getSpectacle(int idSpectacle) 
 {
 return tabSpectaclesGlobal[idSpectacle];
 }
 */
+
 //teste si un spectacle existe par l'id, l'entrée dutableau ne doit,pas être nul
 //bool spectacle_exists(int idSpectacle)
 //{
