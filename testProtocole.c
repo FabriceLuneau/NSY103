@@ -48,11 +48,11 @@ response_afficher(&resp);
  printf("\nTeste dune reponse avec un spectacle\n");
 
 char chaine[4];
- snprintf(chaine, sizeof(chaine), "%d", tabSpectacles[0].nbPlaces);
+ snprintf(chaine, sizeof(chaine), "%d", tabSpectaclesGlobal[0].nbPlaces);
 
    response_init(&resp, 200);
  response_ajouterCleValeur(&resp, cleValeur_create("id", "0"));
-        response_ajouterCleValeur(&resp, cleValeur_create("intitule", tabSpectacles[0].intitule));
+        response_ajouterCleValeur(&resp, cleValeur_create("intitule", tabSpectaclesGlobal[0].intitule));
         response_ajouterCleValeur(&resp, cleValeur_create("nbPlaces", chaine));
         //response_ajouterCleValeur(&resp, creerCleValeur("nbPlaces", tabSpectacles[0].nbPlaces));
 

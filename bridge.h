@@ -1,4 +1,3 @@
-freponseaj
 #include <stdio.h>
 #include <string.h>
 #include "response.h"
@@ -32,7 +31,7 @@ void bridge_encodeSpectaclesResponse(
             creerCleValeur("id", tmp)
         );
 
-        responseAjouterCleValeumr(
+        response_ajouterCleValeur(
             resp,
             creerCleValeur("intitule", spectacles[0].intitule)
         );

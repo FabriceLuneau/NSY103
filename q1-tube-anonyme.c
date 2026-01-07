@@ -197,6 +197,8 @@ int main(int argc, char **argv)
 
             request_afficher(&req);
 
+            //teste de l'action et branchement surle traitement
+            //retourne tous les spectacles
             if (strcmp(req.action, "getSpectacles") == 0)
             {
                 response_init(&resp, 200);
@@ -206,41 +208,51 @@ int main(int argc, char **argv)
 spectacle_getTailleTableauGlobal
                 );
             }
-            else if (strcmp(req.action, "getSpectacle") == 0)
-            {
-                int id = request_getId(&req);
-                struct spectacle spec = tabSpectaclesGlobal[id];
-                response_init(&resp, 200);
-                bridge_encodeUnSpectacleResponse(
-                    &resp,
-                    spec);
-            }
-            else if (strcmp(req.action, "reserver") == 0)
+            //retourne un spectacle as            //else if (strcmp(req.action, "getSpectacle") == 0)
+            //{
+                //int id = request_getId(&req);
+                //struct spectacle spec = tabSpectaclesGlobal[id];
+
+                //response_init(&resp, 200);
+                //bridge_encodeUnSpectacleResponse(
+                    //&resp,
+                    //spec);
+            //}
+            //retirer des place si disponible
+            else if(strcmp(req.action, "reserver") == 0)
             {
                 int id = request_getId(&req);
                 int nbPlaces = request_getNbPlaces(&req);
+                
+                    //si le spectacle n'existe pas on sort
+//                    //todo il n'ya pas de fonction pour tester l'id si le spectacle existe ap
+                    //if(spectacle_exists(id)) 
+                   //{
+                        //response_init(&resp, 404201);
+                                            //}
+                    //si il n'y a pas asse de places
+                    //todo penser à ajouter le elseif en dessous lors de l'intégration
+                    if(!spectacle_quantiteEstDisponible(id, nbPlaces) )
+                        {
+response_init(&resp, 401);
+                        } 
+                        else {
+                            spectacle_retirerPlaces(id, nbPlaces);
 
-                int r = spectacle_reserver(
-                    tabSpectaclesGlobal,
-                    spectacle_getTailleTableauGlobal,
-                    id);
-
-                if (r == 0)
                     response_init(&resp, 201);
-                else if (r == -1)
-                    response_init(&resp, 404);
-                else
-                    response_init(&resp, 401);
-            }
-            else
-            {
-                response_init(&resp, 400);
-            }
+                        }
+                    
+                    //si on est là l'action est
 
-            response_afficher(&resp);
+                    //fin des testdes actions
+
+   //affichagee pour toutes les responses
+                    response_afficher(&resp);
+
             write(outcoming[1], &resp, sizeof(resp));
         }
     }
+}
 
     return 0;
 }

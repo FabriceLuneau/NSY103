@@ -60,7 +60,7 @@ bool spectacle_retirerPlaces(int idSpectacle, int quantiteDemandee) {
         return false;
     }
 }
-
+/*
 struct spectacle creerSpectacle(int id, const char *intitule, int nbPlaces) {
     struct spectacle s;
     strncpy(s.intitule, intitule, sizeof(s.intitule) - 1);
@@ -68,6 +68,7 @@ struct spectacle creerSpectacle(int id, const char *intitule, int nbPlaces) {
     s.nbPlaces = nbPlaces;
     return s;
 }
+*/
 /*
 bool spectacle_ajouterToGlobalTab(struct spectacle s) {
     if (nbSpec >= maxSpectacles) {
