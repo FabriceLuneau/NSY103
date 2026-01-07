@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 						//Il faut choisir un spectacle pour avoir accès aux opérations, il est affiché en rappel, 9999 correspond à l'absence de choix
 			if(specSelect != 9999) 
 			{
-				printf("Spectacle selectionne: %i %s %i \n", specSelect, tabSpectacles[specSelect].intitule, tabSpectacles[specSelect].nbPlaces);
+				printf("Spectacle selectionne: %i %s %i \n", specSelect, tabSpectaclesGlobal[specSelect].intitule, tabSpectaclesGlobal[specSelect].nbPlaces);
 				}  
 				else 
 				{

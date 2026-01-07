@@ -12,7 +12,8 @@ struct spectacle {
     int nbPlaces;
 };
 
-struct spectacle tabSpectacles[100];
+struct spectacle tabSpectaclesGlobal[100];
+
 
 void spectacle_initTabGlobal() {
     struct spectacle tabTemp[] = {
@@ -25,34 +26,35 @@ void spectacle_initTabGlobal() {
     };
 
     int taille = sizeof(tabTemp) / sizeof(tabTemp[0]);
-    for (int i = 0; i < taille; i++) {
-        tabSpectacles[i] = tabTemp[i];
+    for (int i = 0; i < taille; i++) 
+    {
+        tabSpectaclesGlobal[i] = tabTemp[i];
     }
     nbSpec = taille;
 }
-
+    
 void spectacle_afficherTout() {
     printf("Liste des spectacles :\n");
     for (int i = 0; i < nbSpec; i++) {
         printf("%d - %s (%d places)\n",
                i,
-               tabSpectacles[i].intitule,
-               tabSpectacles[i].nbPlaces);
+               tabSpectaclesGlobal[i].intitule,
+               tabSpectaclesGlobal[i].nbPlaces);
     }
 }
 
 // Test si la quantité de places est disponible pour l'id du spectacle spécifié, retourne un booléen
-bool quantiteEstDisponible(int idSpectacle, int quantiteDemandee) {
+bool spectacle_quantiteEstDisponible(int idSpectacle, int quantiteDemandee) {
     if (idSpectacle < 0 || idSpectacle >= nbSpec) {
         return false;
     }
-    return quantiteDemandee <= tabSpectacles[idSpectacle].nbPlaces;
+    return quantiteDemandee <= tabSpectaclesGlobal[idSpectacle].nbPlaces;
 }
 
 // Décrémente le nombre de places demandées pour l'id spectacle si disponible, retourne un booléen
 bool spectacle_retirerPlaces(int idSpectacle, int quantiteDemandee) {
-    if (quantiteEstDisponible(idSpectacle, quantiteDemandee)) {
-        tabSpectacles[idSpectacle].nbPlaces -= quantiteDemandee;
+    if(spectacle_quantiteEstDisponible(idSpectacle, quantiteDemandee)) {
+        tabSpectaclesGlobal[idSpectacle].nbPlaces -= quantiteDemandee;
         return true;
     } else {
         return false;
@@ -66,15 +68,16 @@ struct spectacle creerSpectacle(int id, const char *intitule, int nbPlaces) {
     s.nbPlaces = nbPlaces;
     return s;
 }
-
+/*
 bool spectacle_ajouterToGlobalTab(struct spectacle s) {
     if (nbSpec >= maxSpectacles) {
         return false;
     }
-    tabSpectacles[nbSpec++] = s;
+    tabSpectaclesGlobal[nbSpec++] = s;
     return true;
 }
-
+*/
+/*
 struct spectacle spectacle_createDepuisChaine(char *chaine) {
     char buffer[256];
     strncpy(buffer, chaine, sizeof(buffer) - 1);
@@ -124,7 +127,7 @@ char **splitMessage(const char *chaine, int *nbElements) {
     *nbElements = count;
     return resultat;
 }
-
+/* 
 int spectacle_createPlusieursDepuisChaine(char *chaine) {
     int nbElements = 0;
     int nbAjoutes = 0;
@@ -135,6 +138,7 @@ int spectacle_createPlusieursDepuisChaine(char *chaine) {
         if (nbSpec >= maxSpectacles) {
             break;
         }
+        /*
         struct spectacle s = spectacle_createDepuisChaine(messages[i]);
         spectacle_ajouterToGlobalTab(s);
         nbAjoutes++;
@@ -144,3 +148,22 @@ int spectacle_createPlusieursDepuisChaine(char *chaine) {
     free(messages);
     return nbAjoutes;
 }
+
+int spectacle_getTailleTableauGlobal() 
+{
+     return sizeof(tabSpectaclesGlobal) / sizeof(tabSpectaclesGlobal[0]);
+}
+/*
+struct spectacle spectacle_getSpectacle(int idSpectacle) 
+{
+return tabSpectaclesGlobal[idSpectacle];
+}
+*/
+//teste si un spectacle existe par l'id, l'entrée dutableau ne doit,pas être nul
+//bool spectacle_exists(int idSpectacle)
+//{
+    //return (idSpectacle < spectacle_getTailleTableauGlobal);
+//}
+
+
+

@@ -11,6 +11,7 @@
  * Codes :
  * 200 -> GET OK (spectacle ou liste)
  * 201 -> réservation réussie
+ * 400 opération non suportes, bbad request
  * 401 -> pas assez de places
  * 404 -> spectacle introuvable
  */

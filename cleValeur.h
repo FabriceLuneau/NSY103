@@ -21,13 +21,13 @@ struct cleValeur {
 static inline void cleValeur_afficher(const struct cleValeur *item)
 {
     if (item == NULL) return;
-    printf("  %s = %s\n", item->cle, item->valeur);
+    printf(" %s = %s\n", item->cle, item->valeur);
 }
 
 /*
  * Création d'une paire clé / valeur à partir de deux chaînes
  */
-static inline struct cleValeur  cleValeur_create(const char *cle, const char *valeur)
+static inline struct cleValeur cleValeur_create(const char *cle, const char *valeur)
 {
     struct cleValeur item;
 
@@ -68,7 +68,7 @@ static inline struct cleValeur cleValeur_createDepuisChaine(const char *chaine)
 
     char *egal = strchr(buffer, '=');
     if (egal == NULL) {
-        return item; // format invalide
+        return item; /* format invalide */
     }
 
     *egal = '\0';
@@ -78,6 +78,28 @@ static inline struct cleValeur cleValeur_createDepuisChaine(const char *chaine)
 
     strncpy(item.valeur, egal + 1, sizeof(item.valeur) - 1);
     item.valeur[sizeof(item.valeur) - 1] = '\0';
+
+    return item;
+}
+
+/*
+ * Création d'une paire clé / valeur à partir d'une clé et d'un nombre
+ * (le nombre est converti en chaîne)
+ */
+static inline struct cleValeur cleValeur_createValeurNombre(const char *cle, int valeur)
+{
+    struct cleValeur item;
+
+    item.cle[0] = '\0';
+    item.valeur[0] = '\0';
+
+    if (cle != NULL) {
+        strncpy(item.cle, cle, sizeof(item.cle) - 1);
+        item.cle[sizeof(item.cle) - 1] = '\0';
+    }
+
+    /* conversion du nombre en chaîne */
+    snprintf(item.valeur, sizeof(item.valeur), "%d", valeur);
 
     return item;
 }
