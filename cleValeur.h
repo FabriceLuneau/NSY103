@@ -16,15 +16,6 @@ struct cleValeur {
 };
 
 /*
- * Affichage d'une paire clé / valeur
- */
-static inline void cleValeur_afficher(const struct cleValeur *item)
-{
-    if (item == NULL) return;
-    printf(" %s = %s\n", item->cle, item->valeur);
-}
-
-/*
  * Création d'une paire clé / valeur à partir de deux chaînes
  */
 static inline struct cleValeur cleValeur_create(const char *cle, const char *valeur)
@@ -43,6 +34,27 @@ static inline struct cleValeur cleValeur_create(const char *cle, const char *val
         strncpy(item.valeur, valeur, sizeof(item.valeur) - 1);
         item.valeur[sizeof(item.valeur) - 1] = '\0';
     }
+
+    return item;
+}
+
+/*
+ * Création d'une paire clé / valeur à partir d'une clé et d'un nombre
+ * (le nombre est converti en chaîne)
+ */
+static inline struct cleValeur cleValeur_createValeurNombre(const char *cle, int valeur)
+{
+    struct cleValeur item;
+
+    item.cle[0] = '\0';
+    item.valeur[0] = '\0';
+
+    if (cle != NULL) {
+        strncpy(item.cle, cle, sizeof(item.cle) - 1);
+        item.cle[sizeof(item.cle) - 1] = '\0';
+    }
+
+    snprintf(item.valeur, sizeof(item.valeur), "%d", valeur);
 
     return item;
 }
@@ -68,7 +80,7 @@ static inline struct cleValeur cleValeur_createDepuisChaine(const char *chaine)
 
     char *egal = strchr(buffer, '=');
     if (egal == NULL) {
-        return item; /* format invalide */
+        return item;
     }
 
     *egal = '\0';
@@ -83,26 +95,15 @@ static inline struct cleValeur cleValeur_createDepuisChaine(const char *chaine)
 }
 
 /*
- * Création d'une paire clé / valeur à partir d'une clé et d'un nombre
- * (le nombre est converti en chaîne)
+ * Affichage d'une paire clé / valeur
  */
-static inline struct cleValeur cleValeur_createValeurNombre(const char *cle, int valeur)
+static inline void cleValeur_afficher(const struct cleValeur *item)
 {
-    struct cleValeur item;
-
-    item.cle[0] = '\0';
-    item.valeur[0] = '\0';
-
-    if (cle != NULL) {
-        strncpy(item.cle, cle, sizeof(item.cle) - 1);
-        item.cle[sizeof(item.cle) - 1] = '\0';
+    if (item == NULL) {
+        return;
     }
 
-    /* conversion du nombre en chaîne */
-    snprintf(item.valeur, sizeof(item.valeur), "%d", valeur);
-
-    return item;
+    printf(" %s = %s\n", item->cle, item->valeur);
 }
 
 #endif /* CLE_VALEUR_H */
-

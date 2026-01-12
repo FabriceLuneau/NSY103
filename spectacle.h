@@ -1,19 +1,55 @@
+#ifndef SPECTACLE_H
+#define SPECTACLE_H
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+/*
+ * Nombre maximum de spectacles gérés
+ */
 const int maxSpectacles = 100;
 
+/*
+ * Nombre courant de spectacles
+ */
 int nbSpec = 0;
 
+/*
+ * Structure représentant un spectacle
+ */
 struct spectacle {
     char intitule[50];
     int nbPlaces;
 };
 
+/*
+ * Tableau global des spectacles
+ * TODO : éviter l'usage d'un global, trouver une meilleure solution
+ */
 struct spectacle tabSpectaclesGlobal[100];
 
+/*
+ * Teste si un spectacle existe à partir de son identifiant
+ *
+ * L'identifiant doit être compris entre 0 et le nombre d'éléments
+ * actuellement présents dans le tableau global.
+ */
+bool spectacle_exists(int idSpectacle)
+{
+    return (idSpectacle >= 0 && idSpectacle < nbSpec);
+}
+
+void spectacle_afficherTout() {
+    printf("Liste des spectacles :\n");
+    for (int i = 0; i < nbSpec; i++) {
+        printf("%d - %s (%d places)\n",
+               i,
+               tabSpectaclesGlobal[i].intitule,
+               tabSpectaclesGlobal[i].nbPlaces);
+    }
+}
 
 void spectacle_initTabGlobal() {
     struct spectacle tabTemp[] = {
@@ -32,18 +68,11 @@ void spectacle_initTabGlobal() {
     }
     nbSpec = taille;
 }
-    
-void spectacle_afficherTout() {
-    printf("Liste des spectacles :\n");
-    for (int i = 0; i < nbSpec; i++) {
-        printf("%d - %s (%d places)\n",
-               i,
-               tabSpectaclesGlobal[i].intitule,
-               tabSpectaclesGlobal[i].nbPlaces);
-    }
-}
 
-// Test si la quantité de places est disponible pour l'id du spectacle spécifié, retourne un booléen
+/*
+* / Test si la quantité de places est disponible pour le spectacle 
+ *retourne un booléen si vrais si a
+*/
 bool spectacle_quantiteEstDisponible(int idSpectacle, int quantiteDemandee) {
     if (idSpectacle < 0 || idSpectacle >= nbSpec) {
         return false;
@@ -51,7 +80,10 @@ bool spectacle_quantiteEstDisponible(int idSpectacle, int quantiteDemandee) {
     return quantiteDemandee <= tabSpectaclesGlobal[idSpectacle].nbPlaces;
 }
 
-// Décrémente le nombre de places demandées pour l'id spectacle si disponible, retourne un booléen
+/*
+* Décrémente le nombre de places demandées pour le spectacle  si disponible
+* retourne un booléen vrai si réussie
+*/
 bool spectacle_retirerPlaces(int idSpectacle, int quantiteDemandee) {
     if(spectacle_quantiteEstDisponible(idSpectacle, quantiteDemandee)) {
         tabSpectaclesGlobal[idSpectacle].nbPlaces -= quantiteDemandee;
@@ -60,116 +92,5 @@ bool spectacle_retirerPlaces(int idSpectacle, int quantiteDemandee) {
         return false;
     }
 }
-/*
-struct spectacle creerSpectacle(int id, const char *intitule, int nbPlaces) {
-    struct spectacle s;
-    strncpy(s.intitule, intitule, sizeof(s.intitule) - 1);
-    s.intitule[sizeof(s.intitule) - 1] = '\0';
-    s.nbPlaces = nbPlaces;
-    return s;
-}
-*/
-/*
-bool spectacle_ajouterToGlobalTab(struct spectacle s) {
-    if (nbSpec >= maxSpectacles) {
-        return false;
-    }
-    tabSpectaclesGlobal[nbSpec++] = s;
-    return true;
-}
-*/
-/*
-struct spectacle spectacle_createDepuisChaine(char *chaine) {
-    char buffer[256];
-    strncpy(buffer, chaine, sizeof(buffer) - 1);
-    buffer[sizeof(buffer) - 1] = '\0';
 
-    char intitule[50] = "";
-    int nbPlaces = 0;
-
-    char *token = strtok(buffer, ";");
-    while (token != NULL) {
-        char *egal = strchr(token, '=');
-        if (egal != NULL) {
-            *egal = '\0';
-            char *cle = token;
-            char *valeur = egal + 1;
-
-            if (strcmp(cle, "intitule") == 0) {
-                strncpy(intitule, valeur, sizeof(intitule) - 1);
-                intitule[sizeof(intitule) - 1] = '\0';
-            } else if (strcmp(cle, "nbPlaces") == 0) {
-                nbPlaces = atoi(valeur);
-            }
-        }
-        token = strtok(NULL, ";");
-    }
-
-    return creerSpectacle(0, intitule, nbPlaces);
-}
-
-char **splitMessage(const char *chaine, int *nbElements) {
-    char **resultat = malloc(maxSpectacles * sizeof(char *));
-    char buffer[512];
-
-    strncpy(buffer, chaine, sizeof(buffer) - 1);
-    buffer[sizeof(buffer) - 1] = '\0';
-
-    int count = 0;
-    char *token = strtok(buffer, ",");
-
-    while (token != NULL && count < maxSpectacles) {
-        resultat[count] = malloc(strlen(token) + 1);
-        strcpy(resultat[count], token);
-        count++;
-        token = strtok(NULL, ",");
-    }
-
-    *nbElements = count;
-    return resultat;
-}
-/* 
-int spectacle_createPlusieursDepuisChaine(char *chaine) {
-    int nbElements = 0;
-    int nbAjoutes = 0;
-
-    char **messages = splitMessage(chaine, &nbElements);
-
-    for (int i = 0; i < nbElements; i++) {
-        if (nbSpec >= maxSpectacles) {
-            break;
-        }
-        /*
-        struct spectacle s = spectacle_createDepuisChaine(messages[i]);
-        spectacle_ajouterToGlobalTab(s);
-        nbAjoutes++;
-        free(messages[i]);
-    }
-
-    free(messages);
-    return nbAjoutes;
-}
-    */
-
-int spectacle_getTailleTableauGlobal() 
-{
-     //return sizeof(tabSpectaclesGlobal) / sizeof(tabSpectaclesGlobal[0]);
-     //todo trouver une solution dynamique
-     return 100;
-}
-/*
-
-struct spectacle spectacle_getSpectacle(int idSpectacle) 
-{
-return tabSpectaclesGlobal[idSpectacle];
-}
-*/
-
-//teste si un spectacle existe par l'id, l'entrée dutableau ne doit,pas être nul
-//bool spectacle_exists(int idSpectacle)
-//{
-    //return (idSpectacle < spectacle_getTailleTableauGlobal);
-//}
-
-
-
+#endif

@@ -5,6 +5,8 @@
 
 int main(int argc, char** argv) 
 {
+	printf("Création et ajout d'un spectacle); \n");
+
 	//int id;
 //char intitule[50];
 //int nbPlaces;
@@ -16,26 +18,15 @@ int main(int argc, char** argv)
 	//scanf("%s", intitule);
 	
 	//printf("Entrer le nombre de place du spectacle \n");
-	
+
+	struct spectacle spec = spectacle_creer("Le chat beaute", 2);
+	spectacle_ajouterSpectacle(spec);
+spectacle_afficherTout();
+
+printf("\n initialisation du jeu de test");
+		
 	spectacle_initTabGlobal();
 
-    //char chaine[] = "intitule=Hamlet;nbPlaces=50";
-	
-    //struct spectacle s = creerSpectacleDepuisChaine(chaine);
-    //ajouterSpectacle(s);
-	    
-        char chaine[] =
-        "intitule=Hamlet;nbPlaces=50,"
-        "intitule=Macbeth;nbPlaces=30,"
-        "intitule=Othello;nbPlaces=40";
-
-    	//la fonction est caduc depuis que l'on passe par le protocole        		
-		//int nb = spectacle_createPlusieursDepuisChaine(chaine);
-		
-		//printf("nb : %i \n", nb);
-		
-	spectacle_afficherTout();
-	
 
 	return 0;
 	}

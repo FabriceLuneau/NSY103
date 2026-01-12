@@ -106,7 +106,7 @@ int main(int argc, char **argv)
             }
 
             case 2:
-                spectacle_afficher();
+                spectacle_afficherTout();
                 // tabSpectacles,
                 ////spectacle_compter(tabSpectacleClient, capacite)
                 //);
@@ -118,8 +118,8 @@ int main(int argc, char **argv)
                     int nbPlaces;
                     printf("Entrez le nombre de places: ");
                     scanf("%d", &nbPlaces);
-
-                    request_createReserver(&req, specSelect, nbPlaces);
+                    
+                    request_createDepuisChaine("getSpectacles",& req);(&req, specSelect, nbPlaces);
                     write(incoming[1], &req, sizeof(req));
 
                     read(outcoming[0], &resp, sizeof(resp));
@@ -205,7 +205,7 @@ int main(int argc, char **argv)
                 bridge_encodeSpectaclesResponse(
                     &resp,
                     tabSpectaclesGlobal,
-spectacle_getTailleTableauGlobal
+//spectacle_getTailleTableauGlobal
                 );
             }
             //retourne un spectacle as            //else if (strcmp(req.action, "getSpectacle") == 0)

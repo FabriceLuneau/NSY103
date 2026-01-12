@@ -9,19 +9,19 @@ servira de base aux questions du sujet.
 int main(int argc, char** argv) 
 {
 	//valeur impossible pour le démarage
-	int specSelect = 9999;
+	int specSelect = -1;
 	
     spectacle_initTabGlobal();
 	
-	//Valeur d'action 99 impossible pour rester dans la boucle while
-			int choix = 99;
+	//Valeur d'action impossible pour rester dans la boucle while
+			int choix = -1;
 			
 				//Tant que l'utilisateur ne choisit pas 0 on reste dans la boucle
 				while(choix != 0) {
 			printf("Menu \n\n");
 			
-						//Il faut choisir un spectacle pour avoir accès aux opérations, il est affiché en rappel, 9999 correspond à l'absence de choix
-			if(specSelect != 9999) 
+						//Il faut choisir un spectacle pour avoir accès aux opérations, il est affiché en rappel,
+			if(specSelect != -1) 
 			{
 				printf("Spectacle selectionne: %i %s %i \n", specSelect, tabSpectaclesGlobal[specSelect].intitule, tabSpectaclesGlobal[specSelect].nbPlaces);
 				}  

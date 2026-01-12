@@ -13,7 +13,7 @@
  */
 struct request {
     char action[50];                 // action (ex: getSpectacle, reserver)
-    struct cleValeur arguments[10];  // paires clé / valeur
+    struct cleValeur arguments[100];  // paires clé / valeur
     int nbArguments;                 // nombre réel d'arguments
 };
 
@@ -122,6 +122,26 @@ static inline void request_afficher(const struct request *req)
 cleValeur_afficher(&req->arguments[i]);
     }
 }
+
+static inline int request_ajouterArgument(
+    struct request *req,
+    const struct cleValeur *cv
+)
+{
+    if (req == NULL || cv == NULL)
+        return -1;
+
+    if (req->nbArguments >= 100)
+        return -1;
+
+    req->arguments[req->nbArguments] = *cv;
+    req->nbArguments++;
+
+    return 0;
+}
+
+✔️ cohérent
+✔️ sans fuite mémoire
 
 #endif /* REQUEST_H */
 
