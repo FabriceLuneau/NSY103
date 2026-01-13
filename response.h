@@ -1,79 +1,56 @@
-#ifndef RESPONSE_H
-#define RESPONSE_H
-
-#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "cleValeur.h"
 
-/* Réponse serveur
- * Codes :
- * 200 -> GET OK (spectacle ou liste)
- * 201 -> réservation réussie
- * 400 -> opération non supportée, bad request
- * 401 -> pas assez de places
- * 404 -> spectacle introuvable
- */
-struct response
-{
-    int code;
-    struct cleValeur content[100];
-    int nbContent;
-};
-
-/*
- * Retourne une réponse initialisée avec le code en argument
- */
-static inline struct response response_create(int code)
-{
-    struct response resp;
-
-    resp.code = code;
-    resp.nbContent = 0;
-
-    return resp;
+ListeCleValeur listeCleValeur_create(void) {
+    ListeCleValeur l;
+    l.items = NULL;
+    l.taille = 0;
+    l.capacite = 0;
+    return l;
 }
 
-/*
- * Ajoute une paire clé / valeur à la réponse
- */
-static inline int response_ajouterCleValeur(
-    struct response *resp,
-    struct cleValeur item
-)
-{
-    if (resp == NULL)
-    {
-        return -1;
+int listeCleValeur_add(ListeCleValeur *l,
+                       const char *cle,
+                       const char *valeur) {
+    if (!l) return 0;
+
+    if (l->taille == l->capacite) {
+        size_t new_cap = l->capacite ? l->capacite * 2 : 4;
+        CleValeur *tmp = realloc(l->items, new_cap * sizeof(*tmp));
+        if (!tmp) return 0;
+
+        l->items = tmp;
+        l->capacite = new_cap;
     }
 
-    if (resp->nbContent >= 100)
-    {
-        return -1;
-    }
+    l->items[l->taille].cle = strdup(cle);
+    l->items[l->taille].valeur = strdup(valeur);
 
-    resp->content[resp->nbContent] = item;
-    resp->nbContent++;
+    if (!l->items[l->taille].cle || !l->items[l->taille].valeur)
+        return 0;
 
-    return 0;
+    l->taille++;
+    return 1;
 }
 
-/*
- * Affichage (debug / test)
- */
-static inline void response_afficher(const struct response *resp)
-{
-    if (resp == NULL)
-    {
-        return;
-    }
+const char *listeCleValeur_get(const ListeCleValeur *l,
+                               const char *cle) {
+    if (!l) return NULL;
 
-    printf("Response :\n");
-    printf("Code : %d\n", resp->code);
-    printf("Contenu (%d) :\n", resp->nbContent);
-
-    for (int i = 0; i < resp->nbContent; i++)
-    {
-        cleValeur_afficher(&resp->content[i]);
+    for (size_t i = 0; i < l->taille; i++) {
+        if (strcmp(l->items[i].cle, cle) == 0)
+            return l->items[i].valeur;
     }
+    return NULL;
 }
 
-#endif /* RESPONSE_H */
+void listeCleValeur_free(ListeCleValeur *l) {
+    if (!l) return;
+
+    for (size_t i = 0; i < l->taille; i++) {
+        free(l->items[i].cle);
+        free(l->items[i].valeur);
+    }
+    free(l->items);
+}
