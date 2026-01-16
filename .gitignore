@@ -63,3 +63,8 @@ dkms.conf
 
 #dossier de build
 build/*.*
+test/*.*
+
+#fichier future
+*-.future.c
+*-.future.h

@@ -94,4 +94,23 @@ static inline void listeCleValeur_free(ListeCleValeur *l)
     l->capacite = 0;
 }
 
+//afffiche toutes les clefs valeur de la liste
+static inline void listeCleValeur_afficher(const ListeCleValeur *l)
+{
+    if (l == NULL)
+        return;
+
+    for (size_t i = 0; i < l->taille; i++)
+    {
+        /* soit tu utilises une fonction dédiée */
+        cleValeur_afficher(&l->items[i]);
+
+        /* soit en direct :
+        printf("clé: %s | valeur: %s\n",
+               l->items[i].cle,
+               l->items[i].valeur);
+        */
+    }
+}
+
 #endif /* LISTE_CLE_VALEUR_H */

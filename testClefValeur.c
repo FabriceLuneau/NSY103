@@ -18,20 +18,21 @@ int main(void)
     cleValeur_afficher(&cv3);
 
     // Test de ListeCleValeur
-    ListeCleValeur cl = listeCleValeur_create();
-    listeCleValeur_add(&cl, cv1);
-    listeCleValeur_add(&cl, cv2);
-    listeCleValeur_add(&cl, cv3);
+    ListeCleValeur lcv = listeCleValeur_create();
+    listeCleValeur_add(&lcv, cv1);
+    listeCleValeur_add(&lcv, cv2);
+    listeCleValeur_add(&lcv, cv3);
 
     // Affichage des éléments de la liste
     printf("\nAffichage des éléments de la liste :\n");
-    for (size_t i = 0; i < cl.taille; i++)
-    {
-        cleValeur_afficher(&cl.items[i]);
-    }
+    listeCleValeur_afficher(&lcv);
+    //for (size_t i = 0; i < cl.taille; i++)
+    //{
+        //cleValeur_afficher(&cl.items[i]);
+    //}
 
     // Libération de la mémoire de la liste
-    listeCleValeur_free(&cl);
+    listeCleValeur_free(&lcv);
 
     return 0;
 }
