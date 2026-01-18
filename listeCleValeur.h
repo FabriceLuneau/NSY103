@@ -62,7 +62,7 @@ static inline int listeCleValeur_add(ListeCleValeur *l, struct cleValeur cv)
 /* Récupère la valeur associée à une clé
  * Renvoie NULL si la clé n'existe pas
  */
-static inline const char *listeCleValeur_get(const ListeCleValeur *l, const char *cle)
+static inline const char *listeCleValeur_getValeur(const ListeCleValeur *l, const char *cle)
 {
     if (l == NULL || cle == NULL)
     {

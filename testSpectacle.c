@@ -1,11 +1,10 @@
-#include <stdbool.h>
 #include<stdio.h>
 #include"spectacle.h"
 
 
 int main(int argc, char** argv) 
 {
-	printf("Création et ajout d'un spectacle); \n");
+//rintf("Création et ajout d'un spectacle); \n");
 
 	//int id;
 //char intitule[50];
@@ -19,9 +18,9 @@ int main(int argc, char** argv)
 	
 	//printf("Entrer le nombre de place du spectacle \n");
 
-	struct spectacle spec = spectacle_creer("Le chat beaute", 2);
-	spectacle_ajouterSpectacle(spec);
-spectacle_afficherTout();
+	//ruct spectacle spec = spectacle_creer("Le chat beaute", 2);
+	//ectacle_ajouterSpectacle(spec);
+//sptacle_afficherTout();
 
 printf("\n initialisation du jeu de test");
 		

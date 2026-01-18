@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 #include "cleValeur.h"
 #include "response.h"
 #include "spectacle.h"
@@ -9,16 +10,16 @@ int main(void)
        Test d'une réponse simple
        ============================= */
 
-    struct response *resp = response_create(201);
+    struct response resp = response_create(201);
 
     printf("\nTest d'une reponse simple\n");
-    response_afficher(resp);
+    response_afficher(&resp);
 
     /* =============================
        Test d'une réponse avec contenu
        ============================= */
 
-    // Initialisation des spectacles (si nécessaire)
+    /* Initialisation des spectacles */
     spectacle_initTabGlobal();
 
     char chaine[16];
@@ -26,19 +27,23 @@ int main(void)
 
     resp = response_create(200);
 
-    response_ajouterCleValeur(
-        resp,
-        cleValeur_create("id", "0")
-    );
+    /* Création des paires clé / valeur */
+    struct cleValeur cv_id =
+        cleValeur_create("id", "0");
 
-    response_ajouterCleValeur(
-        resp,
-        cleValeur_create("intitule", tabSpectaclesGlobal[0].intitule)
-    );
+    struct cleValeur cv_intitule =
+        cleValeur_create("intitule", tabSpectaclesGlobal[0].intitule);
 
-    response_ajouterCleValeur(
-        resp,
-        cleValeur_create("nbPlaces", chaine)
-    );
+    struct cleValeur cv_nbPlaces =
+        cleValeur_create("nbPlaces", chaine);
 
-    printf
+    /* Ajout au contenu de la réponse */
+    response_ajouterContenu(&resp, &cv_id);
+    response_ajouterContenu(&resp, &cv_intitule);
+    response_ajouterContenu(&resp, &cv_nbPlaces);
+
+    printf("\nTest d'une reponse avec contenu\n");
+    response_afficher(&resp);
+
+    return 0;
+}
