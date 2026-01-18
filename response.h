@@ -1,98 +1,112 @@
 #ifndef RESPONSE_H
 #define RESPONSE_H
+#ifndef RESPONSE_H
+#define RESPONSE_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "listeCleValeur.h"
 #include "cleValeur.h"
 
 /*
- * Réponse envoyée par le serveur au client.
+ * Représente une réponse serveur
  *
- * Codes possibles :
- *  200 : requête acceptée, contenu retourné
- *  201 : réservation réussie
- *  400 : opération non supportée
- *  401 : réservation échouée (pas assez de places)
- *  404 : spectacle non trouvé
- *
- * Le contenu est représenté par une liste clé / valeur.
- *
- * La liste peut contenir :
- *  - rien : par exemple en cas de succès d’une réservation
- *  - un tableau logique (clé = "array")
- *  - des items représentant des spectacles (clé = "item")
- *
- * Le format exact du contenu est volontairement simple ici :
- * l’objectif est la compilation et la cohérence de l’API.
+ * Exemples :
+ *   200
+ *   404
+ *   200?array=item:id=1;intitule=Opera;nbPlaces=20
+ *   200?array=item:id=1;intitule=Opera;nbPlaces=20,
+ *             item:id=2;intitule=Concert;nbPlaces=100
  */
 struct response
 {
-    /*
-     * Code de la réponse (ex : "200", "404", ...)
-     */
-    char code[16];
-
-    /*
-     * Contenu de la réponse sous forme clé / valeur
-     */
-    ListeCleValeur contenu;
+    char code[8];          /* code de réponse (200, 404, ...) */
+    ListeCleValeur contenu; /* contenu clé/valeur */
 };
 
+/* =============================
+   Prototypes internes
+   ============================= */
+static inline int response_ajouterContenu(
+    struct response *resp,
+    const struct cleValeur *cv
+);
+
 /*
- * Crée une réponse initialisée avec un code.
+ * Crée une réponse avec un code obligatoire
  */
-static inline struct response response_create(int code)
+static inline struct response response_create(const char *code)
 {
     struct response resp;
 
-    /* Initialisation du code */
-    snprintf(resp.code, sizeof(resp.code), "%d", code);
+    if (code == NULL)
+    {
+        resp.code[0] = '\0';
+    }
+    else
+    {
+        strncpy(resp.code, code, sizeof(resp.code) - 1);
+        resp.code[sizeof(resp.code) - 1] = '\0';
+    }
 
-    /* Initialisation du contenu */
     resp.contenu = listeCleValeur_create();
-
     return resp;
 }
 
 /*
- * Initialise une réponse à partir d’un code et d’un contenu brut.
+ * Analyse une réponse sous la forme :
+ *   code?cle=valeur&cle2=valeur2
  *
- * Pour l’instant :
- *  - le contenu n’est pas parsé
- *  - seule l’initialisation est effectuée
- *
- * Retour :
- *   1  -> succès
- *   0  -> erreur
+ * Exemple :
+ *   200?array=item:id=1;intitule=Opera;nbPlaces=20
  */
 static inline int response_createDepuisChaine(
     struct response *resp,
-    int code,
-    const char *contenu
+    const char *chaine
 )
 {
-    (void)contenu; /* contenu non utilisé pour l’instant */
+    char buffer[512];
 
-    if (resp == NULL)
+    if (resp == NULL || chaine == NULL)
+    {
+        return -1;
+    }
+
+    strncpy(buffer, chaine, sizeof(buffer) - 1);
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    /* séparation code / contenu */
+    char *p = strtok(buffer, "?");
+    if (p == NULL)
+    {
+        return -1;
+    }
+
+    strncpy(resp->code, p, sizeof(resp->code) - 1);
+    resp->code[sizeof(resp->code) - 1] = '\0';
+
+    /* pas de contenu */
+    p = strtok(NULL, "?");
+    if (p == NULL)
     {
         return 0;
     }
 
-    snprintf(resp->code, sizeof(resp->code), "%d", code);
-    resp->contenu = listeCleValeur_create();
+    /* découpage cle=valeur (& séparateur) */
+    char *arg = strtok(p, "&");
+    while (arg != NULL)
+    {
+        struct cleValeur cv = cleValeur_createDepuisChaine(arg);
+        response_ajouterContenu(resp, &cv);
+        arg = strtok(NULL, "&");
+    }
 
-    return 1;
+    return 0;
 }
 
 /*
- * Recherche une valeur dans le contenu de la réponse par sa clé.
- *
- * Retour :
- *  - pointeur sur la valeur
- *  - NULL si la clé est absente
+ * Récupère une valeur du contenu
  */
 static inline const char *response_getContenuValue(
     const struct response *resp,
@@ -108,11 +122,22 @@ static inline const char *response_getContenuValue(
 }
 
 /*
- * Ajoute un élément clé / valeur au contenu de la réponse.
- *
- * Retour :
- *   1  -> succès
- *   0  -> erreur
+ * Affichage debug de la réponse
+ */
+static inline void response_afficher(const struct response *resp)
+{
+    if (resp == NULL)
+        return;
+
+    printf("Response :\n");
+    printf("Code : %s\n", resp->code);
+    printf("Contenu :\n");
+
+    listeCleValeur_afficher(&resp->contenu);
+}
+
+/*
+ * Ajoute un contenu clé/valeur à la réponse
  */
 static inline int response_ajouterContenu(
     struct response *resp,
@@ -127,15 +152,133 @@ static inline int response_ajouterContenu(
     return listeCleValeur_add(&resp->contenu, *cv);
 }
 
+#endif /* RESPONSE_H */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "listeCleValeur.h"
+#include "cleValeur.h"
+
 /*
- * Affiche une réponse (debug / test).
+ * Représente une réponse serveur
+ *
+ * Exemples :
+ *   200
+ *   404
+ *   200?array=item:id=1;intitule=Opera;nbPlaces=20
+ *   200?array=item:id=1;intitule=Opera;nbPlaces=20,
+ *             item:id=2;intitule=Concert;nbPlaces=100
+ */
+struct response
+{
+    char code[8];          /* code de réponse (200, 404, ...) */
+    ListeCleValeur contenu; /* contenu clé/valeur */
+};
+
+/* =============================
+   Prototypes internes
+   ============================= */
+static inline int response_ajouterContenu(
+    struct response *resp,
+    const struct cleValeur *cv
+);
+
+/*
+ * Crée une réponse avec un code obligatoire
+ */
+static inline struct response response_create(const char *code)
+{
+    struct response resp;
+
+    if (code == NULL)
+    {
+        resp.code[0] = '\0';
+    }
+    else
+    {
+        strncpy(resp.code, code, sizeof(resp.code) - 1);
+        resp.code[sizeof(resp.code) - 1] = '\0';
+    }
+
+    resp.contenu = listeCleValeur_create();
+    return resp;
+}
+
+/*
+ * Analyse une réponse sous la forme :
+ *   code?cle=valeur&cle2=valeur2
+ *
+ * Exemple :
+ *   200?array=item:id=1;intitule=Opera;nbPlaces=20
+ */
+static inline int response_createDepuisChaine(
+    struct response *resp,
+    const char *chaine
+)
+{
+    char buffer[512];
+
+    if (resp == NULL || chaine == NULL)
+    {
+        return -1;
+    }
+
+    strncpy(buffer, chaine, sizeof(buffer) - 1);
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    /* séparation code / contenu */
+    char *p = strtok(buffer, "?");
+    if (p == NULL)
+    {
+        return -1;
+    }
+
+    strncpy(resp->code, p, sizeof(resp->code) - 1);
+    resp->code[sizeof(resp->code) - 1] = '\0';
+
+    /* pas de contenu */
+    p = strtok(NULL, "?");
+    if (p == NULL)
+    {
+        return 0;
+    }
+
+    /* découpage cle=valeur (& séparateur) */
+    char *arg = strtok(p, "&");
+    while (arg != NULL)
+    {
+        struct cleValeur cv = cleValeur_createDepuisChaine(arg);
+        response_ajouterContenu(resp, &cv);
+        arg = strtok(NULL, "&");
+    }
+
+    return 0;
+}
+
+/*
+ * Récupère une valeur du contenu
+ */
+static inline const char *response_getContenuValue(
+    const struct response *resp,
+    const char *cle
+)
+{
+    if (resp == NULL || cle == NULL)
+    {
+        return NULL;
+    }
+
+    return listeCleValeur_getValeur(&resp->contenu, cle);
+}
+
+/*
+ * Affichage debug de la réponse
  */
 static inline void response_afficher(const struct response *resp)
 {
     if (resp == NULL)
-    {
         return;
-    }
 
     printf("Response :\n");
     printf("Code : %s\n", resp->code);
@@ -145,16 +288,19 @@ static inline void response_afficher(const struct response *resp)
 }
 
 /*
- * Libère le contenu de la réponse.
+ * Ajoute un contenu clé/valeur à la réponse
  */
-static inline void response_free(struct response *resp)
+static inline int response_ajouterContenu(
+    struct response *resp,
+    const struct cleValeur *cv
+)
 {
-    if (resp == NULL)
+    if (resp == NULL || cv == NULL)
     {
-        return;
+        return 0;
     }
 
-    listeCleValeur_free(&resp->contenu);
+    return listeCleValeur_add(&resp->contenu, *cv);
 }
 
 #endif /* RESPONSE_H */

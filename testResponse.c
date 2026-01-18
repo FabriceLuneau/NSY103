@@ -1,48 +1,98 @@
 #include <stdio.h>
-
-#include "cleValeur.h"
 #include "response.h"
+#include "cleValeur.h"
 #include "spectacle.h"
 
 int main(void)
 {
-    /* =============================
-       Test d'une réponse simple
-       ============================= */
+    struct response resp;
+    struct cleValeur cv;
 
-    struct response resp = response_create(201);
+    /* =====================================================
+       1. Réponse OK : réservation réussie
+       ===================================================== */
+    printf("\n=== Test 1 : Réservation OK ===\n");
 
-    printf("\nTest d'une reponse simple\n");
+    resp = response_create("200");
+    cv = cleValeur_create("message", "reservation_ok");
+    response_ajouterContenu(&resp, &cv);
+
     response_afficher(&resp);
 
-    /* =============================
-       Test d'une réponse avec contenu
-       ============================= */
+    /* =====================================================
+       2. Réponse ERREUR : pas assez de places
+       ===================================================== */
+    printf("\n=== Test 2 : Erreur - pas assez de places ===\n");
 
-    /* Initialisation des spectacles */
-    spectacle_initTabGlobal();
+    resp = response_create("409"); /* conflit */
 
-    char chaine[16];
-    snprintf(chaine, sizeof(chaine), "%d", tabSpectaclesGlobal[0].nbPlaces);
+    cv = cleValeur_create("message", "pas_assez_de_places");
+    response_ajouterContenu(&resp, &cv);
 
-    resp = response_create(200);
+    response_afficher(&resp);
 
-    /* Création des paires clé / valeur */
-    struct cleValeur cv_id =
-        cleValeur_create("id", "0");
+    /* =====================================================
+       3. Réponse ERREUR : opération inconnue
+       ===================================================== */
+    printf("\n=== Test 3 : Erreur - operation inconnue ===\n");
 
-    struct cleValeur cv_intitule =
-        cleValeur_create("intitule", tabSpectaclesGlobal[0].intitule);
+    resp = response_create("400"); /* requête invalide */
 
-    struct cleValeur cv_nbPlaces =
-        cleValeur_create("nbPlaces", chaine);
+    cv = cleValeur_create("message", "operation_inconnue");
+    response_ajouterContenu(&resp, &cv);
 
-    /* Ajout au contenu de la réponse */
-    response_ajouterContenu(&resp, &cv_id);
-    response_ajouterContenu(&resp, &cv_intitule);
-    response_ajouterContenu(&resp, &cv_nbPlaces);
+    response_afficher(&resp);
 
-    printf("\nTest d'une reponse avec contenu\n");
+    /* =====================================================
+       4. Réponse ERREUR : spectacle non trouvé
+       ===================================================== */
+    printf("\n=== Test 4 : Erreur - spectacle non trouve ===\n");
+
+    resp = response_create("404"); /* non trouvé */
+
+    cv = cleValeur_create("message", "spectacle_non_trouve");
+    response_ajouterContenu(&resp, &cv);
+
+    response_afficher(&resp);
+
+    /* =====================================================
+       5. Réponse OK : un seul spectacle
+       ===================================================== */
+    printf("\n=== Test 5 : Réponse avec un spectacle ===\n");
+
+    resp = response_create("200");
+
+    /*
+     * array = item:id=1;intitule=Opera;nbPlaces=20
+     */
+    cv = cleValeur_create(
+        "array",
+        "item:id=1;intitule=Opera;nbPlaces=20"
+    );
+    response_ajouterContenu(&resp, &cv);
+
+    response_afficher(&resp);
+
+    /* =====================================================
+       6. Réponse OK : plusieurs spectacles
+       ===================================================== */
+    printf("\n=== Test 6 : Réponse avec plusieurs spectacles ===\n");
+
+    resp = response_create("200");
+
+    /*
+     * array = item:id=1;intitule=Opera;nbPlaces=20,
+     *         item:id=2;intitule=Concert;nbPlaces=100,
+     *         item:id=3;intitule=Theatre;nbPlaces=50
+     */
+    cv = cleValeur_create(
+        "array",
+        "item:id=1;intitule=Opera;nbPlaces=20,"
+        "item:id=2;intitule=Concert;nbPlaces=100,"
+        "item:id=3;intitule=Theatre;nbPlaces=50"
+    );
+    response_ajouterContenu(&resp, &cv);
+
     response_afficher(&resp);
 
     return 0;
