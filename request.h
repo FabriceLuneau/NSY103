@@ -1,82 +1,102 @@
-#ifndef REQUEST_Hb
+#ifndef REQUEST_H
 #define REQUEST_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "listeCleValeur.h"
 #include "cleValeur.h"
 
 /*
- * Requête client
+ * Représente une requête client
  *
- * Exemple :
- *   getSpectacle?id=1&nbPlaces=2
+ * Exemples :
+ *   getSpectacles
+ *   getSpectacle?id=1
+ *   reserver?id=1&nbPlaces=2
  */
-struct request {
-    char action[50];                 // action (ex: getSpectacle, reserver)
-    struct cleValeur arguments[100];  // paires clé / valeur
-    int nbArguments;                 // nombre réel d'arguments
+struct request
+{
+    char action[50];          /* action demandée (obligatoire) */
+    ListeCleValeur arguments; /* liste des arguments clé/valeur */
 };
 
-/*
- * Initialise une requête
- */
-static inline void request_init(struct request *req)
-{
-    if (req == NULL) return;
+/* =============================
+   Prototype interne
+   ============================= */
+static inline int request_ajouterArgument(
+    struct request *req,
+    const struct cleValeur *cv
+);
 
-    req->action[0] = '\0';
-    req->nbArguments = 0;
+/*
+ * Crée une requête avec une action obligatoire
+ */
+static inline struct request request_create(const char *action)
+{
+    struct request req;
+
+    if (action == NULL)
+    {
+        /* action obligatoire mais sécurisée */
+        req.action[0] = '\0';
+    }
+    else
+    {
+        strncpy(req.action, action, sizeof(req.action) - 1);
+        req.action[sizeof(req.action) - 1] = '\0';
+    }
+
+    req.arguments = listeCleValeur_create();
+    return req;
 }
 
 /*
- * Analyse une chaîne et remplit une requête
+ * Analyse une chaîne de type :
+ *   action?cle=valeur&cle2=valeur2
  *
  * Retour :
  *   0  -> succès
- *  -1  -> erreur de format
+ *  -1  -> erreur
  */
 static inline int request_createDepuisChaine(
-    const char *chaine,
-    struct request *req
+    struct request *req,
+    const char *chaine
 )
 {
     char buffer[256];
 
-    if (chaine == NULL || req == NULL)
+    if (req == NULL || chaine == NULL)
+    {
         return -1;
+    }
 
-    request_init(req);
-
-    /* strtok modifie la chaîne → copie locale */
     strncpy(buffer, chaine, sizeof(buffer) - 1);
     buffer[sizeof(buffer) - 1] = '\0';
 
-    /* Séparation action / arguments */
+    /* séparation action / arguments */
     char *p = strtok(buffer, "?");
     if (p == NULL)
+    {
         return -1;
+    }
 
     strncpy(req->action, p, sizeof(req->action) - 1);
     req->action[sizeof(req->action) - 1] = '\0';
 
-    /* Aucun argument */
+    /* pas d'arguments */
     p = strtok(NULL, "?");
     if (p == NULL)
+    {
         return 0;
+    }
 
-    /* Découpage clé=valeur séparé par '&' */
+    /* découpage clé=valeur */
     char *arg = strtok(p, "&");
-
-    while (arg != NULL && req->nbArguments < 10) {
-
-        struct cleValeur item;
-        cleValeur_createDepuisChaine(arg);
-
-        //if (creerCleValeurDepuisChaine(arg) == 0) {
-            //req->arguments[req->nbArguments] = item;
-            //req->nbArguments++;
-        //}
-
+    while (arg != NULL)
+    {
+        struct cleValeur cv = cleValeur_createDepuisChaine(arg);
+        request_ajouterArgument(req, &cv);
         arg = strtok(NULL, "&");
     }
 
@@ -85,63 +105,49 @@ static inline int request_createDepuisChaine(
 
 /*
  * Recherche la valeur d’un argument par sa clé
- *
- * Retourne :
- *   pointeur sur la valeur
- *   NULL si absent
  */
-static inline const char *getArgumentValue(
+static inline const char *request_getArgumentValue(
     const struct request *req,
     const char *cle
 )
 {
     if (req == NULL || cle == NULL)
+    {
         return NULL;
-
-    for (int i = 0; i < req->nbArguments; i++) {
-        if (strcmp(req->arguments[i].cle, cle) == 0) {
-            return req->arguments[i].valeur;
-        }
     }
 
-    return NULL;
+    return listeCleValeur_getValeur(&req->arguments, cle);
 }
 
 /*
- * Affichage (debug / test)
+ * Affichage debug de la requête
  */
 static inline void request_afficher(const struct request *req)
 {
-    if (req == NULL) return;
+    if (req == NULL)
+        return;
 
     printf("Request :\n");
     printf("Action : %s\n", req->action);
-    printf("Arguments (%d) :\n", req->nbArguments);
+    printf("Arguments :\n");
 
-    for (int i = 0; i < req->nbArguments; i++) {
-cleValeur_afficher(&req->arguments[i]);
-    }
+    listeCleValeur_afficher(&req->arguments);
 }
 
+/*
+ * Ajoute un argument à la requête
+ */
 static inline int request_ajouterArgument(
     struct request *req,
     const struct cleValeur *cv
 )
 {
     if (req == NULL || cv == NULL)
-        return -1;
+    {
+        return 0;
+    }
 
-    if (req->nbArguments >= 100)
-        return -1;
-
-    req->arguments[req->nbArguments] = *cv;
-    req->nbArguments++;
-
-    return 0;
+    return listeCleValeur_add(&req->arguments, *cv);
 }
 
-✔️ cohérent
-✔️ sans fuite mémoire
-
 #endif /* REQUEST_H */
-

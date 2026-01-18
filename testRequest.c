@@ -1,54 +1,55 @@
 #include <stdio.h>
-#include"cleValeur.h"
+#include "cleValeur.h"
 #include "request.h"
-#include "response.h"
-#include"spectacle.h"
+#include "spectacle.h"
 
 int main(void)
 {
-    //test de cle valeur
+    // Test de cleValeur
     struct cleValeur cv;
 
-    printf("Test de creation d'une structure cle valeur  avec iddeux arguments séparés  1\n");
-     cv = cleValeur_create("id", "1");
+    printf("Test de création d'une structure cleValeur avec deux arguments séparés\n");
+    cv = cleValeur_create("id", "1");
     cleValeur_afficher(&cv);
 
-    printf("Test de creation d'une structure cle valeur  avec une chaine, id=1\n"); 
+    printf("\nTest de création d'une structure cleValeur à partir d'une chaîne 'id=1'\n"); 
     cv = cleValeur_createDepuisChaine("id=1");
-     cleValeur_afficher(&cv);
+    cleValeur_afficher(&cv);
 
-    // Tests de requetes
-    printf("\nTest de creation des structure requete \n");
+    // Tests de requêtes
+    printf("\nTest de création d'une structure request\n");
 
     struct request req;
 
-    printf("\nTest de creation d'une structure requete sans argument");
-    request_createDepuisChaine("getSpectacles",& req);
+    // Initialisation de la requête
+    req = request_create("get");
+
+    printf("\nTest de création d'une requête sans argument\n");
+    request_createDepuisChaine(&req, "getSpectacles");
     request_afficher(&req);
 
-        printf("\nTest de creation d'une structure requete avec un argument, id= 1\n");
-    request_createDepuisChaine("getSpectacle?id=1",& req);
+    printf("\nTest de création d'une requête avec un argument id=1\n");
+    req = request_create("get");
+    request_createDepuisChaine(&req, "getSpectacle?id=1");
     request_afficher(&req);
 
-    printf("\nTest de creation d'une structure requete avec deux argument, id=1 et nbPlaces=2 \n");
-    request_createDepuisChaine("reserver?id=1&nbPlaces=2",& req);
-    //request_afficher(&req);
+    printf("\nTest de création d'une requête avec deux arguments id=1 et nbPlaces=2\n");
+    req = request_create("get");
+    request_createDepuisChaine(&req, "reserver?id=1&nbPlaces=2");
+    request_afficher(&req);
 
-    //printf("\nTest printf("\nTest de creation d'une structure requete avec un argument, structure cv id=1\n");
+    // Test avec ajout manuel d'un argument
+    printf("\nTest d'ajout manuel d'un argument à la requête\n");
+    req = request_create("get");
 
-//struct request req;
-//struct cleValeur cv;
+    /* Création de la paire clé/valeur */
+    cv = cleValeur_create("id", "1");
 
-request_init(&req);
+    /* Ajout de l'argument à la requête */
+    request_ajouterArgument(&req, &cv);
 
-/* Création de la paire clé / valeur */
-cv = cleValeur_create("id", "1");
-
-/* Ajout de l'argument à la requête */
-request_ajouterArgument(&req, &cv);
-
-/* Affichage pour vérification */
-request_afficher(&req);
+    /* Affichage pour vérification */
+    request_afficher(&req);
 
     return 0;
 }
