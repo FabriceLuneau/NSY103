@@ -1,30 +1,42 @@
-#include <stdbool.h>
-#include<stdio.h>
-#include"spectacle.h"
+#include <stdio.h>
+#include <string.h>
+
+#include "bridge.h"
 #include "response.h"
-#include"bridge.h"
+#include "spectacle.h"
 
-
-int main(int argc, char** argv) 
+int main(void)
 {
-	printf("Test encode un spectacle \n\n");
+    struct spectacle tabSpectaclesGlobal[2];
 
-	struct spectacle spec = spectacle_creer("Le chat beaute", 2);
+    strcpy(tabSpectaclesGlobal[0].intitule, "Concert");
+    tabSpectaclesGlobal[0].nbPlaces = 100;
 
-	struct response resp;
-	 response_init(&resp, 200);
-bridge_encodeUnSpectacle(&resp, spec);
-response_afficher(&resp);
+    strcpy(tabSpectaclesGlobal[1].intitule, "Theatre");
+    tabSpectaclesGlobal[1].nbPlaces = 50;
 
-		printf("\n Encoder plusieur spectacles\n\n");
+    /* ===== Test avec plusieurs spectacles ===== */
+    struct response resp1 = response_create(200);
 
+    bridge_encodeSpectaclesResponse(
+        &resp1,
+        tabSpectaclesGlobal,
+        2
+    );
 
+    response_print(&resp1);
+    response_free(&resp1);
 
+    /* ===== Test avec un seul spectacle ===== */
+    struct response resp2 = response_create(200);
 
+    bridge_encodeUnSpectacleResponse(
+        &resp2,
+        tabSpectaclesGlobal[0]
+    );
 
+    response_print(&resp2);
+    response_free(&resp2);
 
-
-	    
-	return 0;
-	}
- 
+    return 0;
+}

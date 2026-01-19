@@ -1,3 +1,6 @@
+#ifndef BRIDGE_H
+#define BRIDGE_H
+
 #include <stdio.h>
 #include <string.h>
 #include "response.h"
@@ -10,7 +13,7 @@
 /*
  * Encodage d'un tableau de spectacles
  */
-void bridge_encodeSpectaclesResponse(
+static inline void bridge_encodeSpectaclesResponse(
     struct response *resp,
     const struct spectacle *spectacles,
     int nbSpectacles
@@ -26,20 +29,20 @@ void bridge_encodeSpectaclesResponse(
         char tmp[16];
 
         snprintf(tmp, sizeof(tmp), "%d", 0);
-        responseAjouterCleValeur(
+        response_ajouterCleValeur(
             resp,
-            creerCleValeur("id", tmp)
+            cleValeur_create("id", tmp)
         );
 
         response_ajouterCleValeur(
             resp,
-            creerCleValeur("intitule", spectacles[0].intitule)
+            cleValeur_create("intitule", spectacles[0].intitule)
         );
 
         snprintf(tmp, sizeof(tmp), "%d", spectacles[0].nbPlaces);
-        response_AjouterCleValeur(
+        response_ajouterCleValeur(
             resp,
-               creerCleValeur("nbPlaces", tmp)
+            cleValeur_create("nbPlaces", tmp)
         );
 
         return;
@@ -72,16 +75,16 @@ void bridge_encodeSpectaclesResponse(
             strcat(buffer, "|");
     }
 
-    responseAjouterCleValeur(
+    response_ajouterCleValeur(
         resp,
-        creerCleValeur("array", buffer)
+        cleValeur_create("array", buffer)
     );
 }
 
 /*
  * Wrapper : encodage d'un seul spectacle
  */
-void bridge_encodeUnSpectacleResponse(
+static inline void bridge_encodeUnSpectacleResponse(
     struct response *resp,
     const struct spectacle spectacle
 ) {
@@ -91,3 +94,4 @@ void bridge_encodeUnSpectacleResponse(
     bridge_encodeSpectaclesResponse(resp, tabSpectacle, 1);
 }
 
+#endif /* BRIDGE_H */
