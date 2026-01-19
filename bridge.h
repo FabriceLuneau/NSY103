@@ -5,10 +5,7 @@
 #include <string.h>
 #include "response.h"
 #include "spectacle.h"
-
-/* =========================================================
- * Encodage d'un ou plusieurs spectacles dans une response
- * ========================================================= */
+#include "cleValeur.h"
 
 /*
  * Encodage d'un tableau de spectacles
@@ -28,22 +25,21 @@ static inline void bridge_encodeSpectaclesResponse(
     if (nbSpectacles == 1) {
         char tmp[16];
 
+        /* id */
         snprintf(tmp, sizeof(tmp), "%d", 0);
-        response_ajouterCleValeur(
-            resp,
-            cleValeur_create("id", tmp)
-        );
+        struct cleValeur cv_id = cleValeur_create("id", tmp);
+        response_ajouterContenu(resp, &cv_id);
 
-        response_ajouterCleValeur(
-            resp,
-            cleValeur_create("intitule", spectacles[0].intitule)
-        );
+        /* intitule */
+        struct cleValeur cv_intitule =
+            cleValeur_create("intitule", spectacles[0].intitule);
+        response_ajouterContenu(resp, &cv_intitule);
 
+        /* nbPlaces */
         snprintf(tmp, sizeof(tmp), "%d", spectacles[0].nbPlaces);
-        response_ajouterCleValeur(
-            resp,
-            cleValeur_create("nbPlaces", tmp)
-        );
+        struct cleValeur cv_nbPlaces =
+            cleValeur_create("nbPlaces", tmp);
+        response_ajouterContenu(resp, &cv_nbPlaces);
 
         return;
     }
@@ -75,10 +71,8 @@ static inline void bridge_encodeSpectaclesResponse(
             strcat(buffer, "|");
     }
 
-    response_ajouterCleValeur(
-        resp,
-        cleValeur_create("array", buffer)
-    );
+    struct cleValeur cv_array = cleValeur_create("array", buffer);
+    response_ajouterContenu(resp, &cv_array);
 }
 
 /*
@@ -95,3 +89,4 @@ static inline void bridge_encodeUnSpectacleResponse(
 }
 
 #endif /* BRIDGE_H */
+

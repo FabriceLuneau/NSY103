@@ -5,38 +5,67 @@
 #include "response.h"
 #include "spectacle.h"
 
-int main(void)
-{
-    struct spectacle tabSpectaclesGlobal[2];
+/* ===== OUTIL DE DEBUG ===== */
+static void afficherResponse(const struct response *resp) {
+    printf("---- RESPONSE ----\n");
+    response_afficher(resp);
+    printf("------------------\n\n");
+}
 
-    strcpy(tabSpectaclesGlobal[0].intitule, "Concert");
-    tabSpectaclesGlobal[0].nbPlaces = 100;
+/* ===== TEST 1 : UN SEUL SPECTACLE ===== */
+void test_bridge_un_spectacle() {
+    printf("[TEST] bridge : un seul spectacle\n");
 
-    strcpy(tabSpectaclesGlobal[1].intitule, "Theatre");
-    tabSpectaclesGlobal[1].nbPlaces = 50;
+    struct spectacle s = {
+        .intitule = "Concert Rock",
+        .nbPlaces = 250
+    };
 
-    /* ===== Test avec plusieurs spectacles ===== */
-    struct response resp1 = response_create(200);
+    struct response resp = response_create("200");
+    bridge_encodeUnSpectacleResponse(&resp, s);
 
-    bridge_encodeSpectaclesResponse(
-        &resp1,
-        tabSpectaclesGlobal,
-        2
-    );
+    afficherResponse(&resp);
+}
 
-    response_print(&resp1);
-    response_free(&resp1);
+/* ===== TEST 2 : PLUSIEURS SPECTACLES ===== */
+void test_bridge_plusieurs_spectacles() {
+    printf("[TEST] bridge : plusieurs spectacles\n");
 
-    /* ===== Test avec un seul spectacle ===== */
-    struct response resp2 = response_create(200);
+    struct spectacle spectacles[2] = {
+        { "Opera", 100 },
+        { "Theatre", 75 }
+    };
 
-    bridge_encodeUnSpectacleResponse(
-        &resp2,
-        tabSpectaclesGlobal[0]
-    );
+    struct response resp = response_create("200");
+    bridge_encodeSpectaclesResponse(&resp, spectacles, 2);
 
-    response_print(&resp2);
-    response_free(&resp2);
+    afficherResponse(&resp);
+}
+
+/* ===== TEST 3 : AUCUN SPECTACLE ===== */
+void test_bridge_aucun_spectacle() {
+    printf("[TEST] bridge : aucun spectacle\n");
+
+    struct response resp = response_create("204");
+    bridge_encodeSpectaclesResponse(&resp, NULL, 0);
+
+    afficherResponse(&resp);
+}
+
+/* ===== TEST 4 : RESPONSE NULL ===== */
+void test_bridge_response_null() {
+    printf("[TEST] bridge : response NULL (ne doit pas crasher)\n");
+
+    struct spectacle s = { "Test", 10 };
+    bridge_encodeUnSpectacleResponse(NULL, s);
+}
+
+/* ===== MAIN ===== */
+int main(void) {
+    test_bridge_un_spectacle();
+    test_bridge_plusieurs_spectacles();
+    test_bridge_aucun_spectacle();
+    test_bridge_response_null();
 
     return 0;
 }
